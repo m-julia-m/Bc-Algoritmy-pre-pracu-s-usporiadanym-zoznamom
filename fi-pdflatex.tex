@@ -93,6 +93,7 @@
 \usepackage{url}      %% Hyperlinks
 \usepackage{markdown} %% Lightweight markup
 \usepackage{listings} %% Source code highlighting
+\usepackage{indentfirst} %% Added by me Julka
 \usepackage{algorithm2e}
 \lstset{
   basicstyle      = \ttfamily,
@@ -126,7 +127,43 @@
 
 \chapter{Usporiadaný zoznam}
 
-Usporiadaný zoznam definujem ako dátový typ, ktorý 
+\textbf{Lineárne usporiadaná množina} $M$ označuje množinu, v ktorej sú každé 2 rôzne prvky porovnateľné a platí $\forall x, y, z \in M : ((x < y) \land (y < z)) \implies (x < z)$. Môžeme si ju predstaviť ako reťazec prvkov $x_1 < x_2 < \ldots < x_m$. Prvok $x$ je \emph{predchodca} prvku $y$, ak $(x < y)$. Analogicky, prvok $x$ je \emph{nasledovník} prvku $y$, práve ak $(y < x)$.
+Hovoríme, že prvok $x$ je \emph{priamy predchodca} prvku $y$, ak platí $\nexists z \in M: (x < z < y)$, respektíve prvok $x$ je \emph{priamy nasledovník} prvku $y$, ak platí $\nexists z \in M: (y < z < x)$.\\
+
+\textbf{Usporiadaný zoznam} definujeme ako dátový typ, ktorý uchováva lineárne usporiadanú množinu objektov $M$ a môžeme na ňom vykonávať operácie:
+\begin{enumerate}
+    \item \emph{Insert(x, y)}: vkladá do množiny $M$ nový objekt $y$ ako priameho nasledovníka existujúceho objektu $x$ z množiny $M$. Po vykonaní operácie platí:
+    \begin{compactitem}
+    \item $x < y$
+    \item $\forall z \in M: (z < x) \implies (z < y) $
+    \item $\forall z \in M: (x < z) \land (z \neq y) \implies (y < z)$
+    \end{compactitem}
+
+    \item \emph{Delete(x)}: odstraňuje z množiny $M$ existujúci objekt $x$.
+    \item \emph{Order(x, y)}: odpovedá, či $x$ je predchodca objektu $y$ pre existujúce objekty $x$ aj $y$ z množiny $M$.
+\end{enumerate}
+
+Príklad 1:
+Máme usporiadaný zoznam s množinou objektov $A < B < C$ a vykonávame na ňom nasledovné operácie v poradí v akom sú uvedené:\\
+\begin{table}
+\begin{tabularx}{\textwidth}{| l | l | l |}
+    % \toprule
+    operácia & návratová hodnota & množina objektov po operácii \\
+    \midrule
+    $Insert(B, D)$ &  & $A < B < D < C$\\
+    $Insert(B, E)$ &  & $A < B < E < D < C$\\
+    $Order(D, E)$ & $false$ & $A < B < E < D < C$\\
+    $Order(E, C)$ & $true$ & $A < B < E < D < C$\\
+    $Remove(A)$ &  & $B < E < D < C$\\
+    $Insert(B, C)$ & \multicolumn{2}{|l|}{\textit{chyba/ nedefinované chovanie (množina už obsahuje C)}}\\
+    $Order(A, B)$ & \multicolumn{2}{|l|}{\textit{chyba/ nedefinované chovanie (množina neobsahuje A)}}\\
+    $Remove(F)$ & \multicolumn{2}{|l|}{\textit{chyba/ nedefinované chovanie (množina neobsahuje F)}}\\
+    % \bottomrule
+  \end{tabularx}
+\end{table}
+
+
+
 
 
 \chapter{These are}
