@@ -23,7 +23,7 @@
   nosansbold,  %% The `nosansbold` option prevents the use of the
                %% sans-serif type face for bold text. Replace with
                %% `sansbold` to use sans-serif type face for bold text.
-  colorbold, %% The `nocolorbold` option disables the usage of the
+  nocolorbold, %% The `nocolorbold` option disables the usage of the
                %% blue color for bold text, instead using black. Replace
                %% with `colorbold` to use blue for bold text.
   lof,         %% The `lof` option prints the List of Figures. Replace
@@ -94,7 +94,8 @@
 \usepackage{markdown} %% Lightweight markup
 \usepackage{listings} %% Source code highlighting
 \usepackage{indentfirst} %% Added by me Julka
-\usepackage{algorithm2e}
+\usepackage[ruled, vlined]{algorithm2e}
+
 \lstset{
   basicstyle      = \ttfamily,
   identifierstyle = \color{black},
@@ -130,7 +131,7 @@
 \textbf{Lineárne usporiadaná množina} $M$ označuje množinu, v ktorej sú každé 2 rôzne prvky porovnateľné a platí $\forall x, y, z \in M : ((x < y) \land (y < z)) \implies (x < z)$. Môžeme si ju predstaviť ako reťazec prvkov $x_1 < x_2 < \ldots < x_m$. Prvok $x$ je \emph{predchodca} prvku $y$, ak $(x < y)$. Analogicky, prvok $x$ je \emph{nasledovník} prvku $y$, práve ak $(y < x)$.
 Hovoríme, že prvok $x$ je \emph{priamy predchodca} prvku $y$, ak platí $\nexists z \in M: (x < z < y)$, respektíve prvok $x$ je \emph{priamy nasledovník} prvku $y$, ak platí $\nexists z \in M: (y < z < x)$.\\
 
-\textbf{Usporiadaný zoznam} definujeme ako dátový typ, ktorý uchováva lineárne usporiadanú množinu objektov $M$ a môžeme na ňom vykonávať operácie:
+\textbf{Usporiadaný zoznam} (order data structure) definujeme ako dátovú štruktúru, ktorá uchováva lineárne usporiadanú množinu objektov $M$ a môžeme na nej vykonávať operácie:
 \begin{enumerate}
     \item \emph{Insert(x, y)}: vkladá do množiny $M$ nový objekt $y$ ako priameho nasledovníka existujúceho objektu $x$ z množiny $M$. Po vykonaní operácie platí:
     \begin{compactitem}
@@ -155,15 +156,72 @@ Máme usporiadaný zoznam s množinou objektov $A < B < C$ a vykonávame na ňom
     $Order(D, E)$ & $false$ & $A < B < E < D < C$\\
     $Order(E, C)$ & $true$ & $A < B < E < D < C$\\
     $Remove(A)$ &  & $B < E < D < C$\\
-    $Insert(B, C)$ & \multicolumn{2}{|l|}{\textit{chyba/ nedefinované chovanie (množina už obsahuje C)}}\\
-    $Order(A, B)$ & \multicolumn{2}{|l|}{\textit{chyba/ nedefinované chovanie (množina neobsahuje A)}}\\
-    $Remove(F)$ & \multicolumn{2}{|l|}{\textit{chyba/ nedefinované chovanie (množina neobsahuje F)}}\\
+    $Insert(B, C)$ & \multicolumn{2}{l|}{\textit{chyba/ nedefinované chovanie (množina už obsahuje C)}}\\
+    $Order(A, B)$ & \multicolumn{2}{l|}{\textit{chyba/ nedefinované chovanie (množina neobsahuje A)}}\\
+    $Remove(F)$ & \multicolumn{2}{l|}{\textit{chyba/ nedefinované chovanie (množina neobsahuje F)}}\\
     % \bottomrule
   \end{tabularx}
 \end{table}
 
+% \chapter{Intuitívna implementácia poľom}
+% Jednou z možností implementácie usporiadaného zoznamu je ukladať objekty v poli, pričom poradie prvkov v poli odpovedá ich usporiadaniu od najmenšieho po najväčší.
 
+% Operácia $Insert(x, y)$ vkladá nový objekt $y$ do poľa hneď za $x$. Elementy poľa napravo od $x$ musíme posunúť o jednu pozíciu doprava. Preto má táto operácia časovú zložitosť $O(n)$.
 
+% Operácia $Remove(x)$ odstraňuje objekt $x$ z poľa. 
+% Aby sme zaplnili prázdne miesto, musíme všetky objekty v poli napravo od $x$ posunúť o jednu pozíciu doľava. Operácia má preto časovú zložitosť $O(n)$.
+
+% Operácii $Order(x, y)$ stačí porovnať indexy prvkov $x$ a $y$. Objekt uložený v poli na nižšom indexe predchádza prvok uložený na vyššom indexe. Preto platí $Order(x, y) \iff index(x) < index(y)$.
+
+\chapter{Implementácia spájaným zoznamom}
+
+Jednou z možností implementácie usporiadaného zoznamu je ukladať objekty v obojsmerne spájanom zozname (doubly linked list). Každý uzol spájaného zoznamu reprezentuje jeden objekt a má odkaz na svojho priameho nasledovníka a priameho predchodcu. Poradie v akom sú objekty uložené v spájanom zozname odpovedá ich usporiadaniu od najmenšieho po najväčší.
+
+Operácia $Insert(x, y)$ vkladá nový objekt $y$ do zoznamu ako nasledovníka $x$. Stačí nastaviť nové vzťahy priamych nasledovníkov a predchodcov pre uzol $y$ a uzly s ním susediace. Operácia má preto časovú zložitosť $O(1)$.
+
+Operácia $Remove(x)$ odstraňuje $x$ zo zoznamu. Opäť stačí nastaviť nové vzťahy priamych prechodcov a následníkov pre uzly susediace s $x$. Operácia má preto časovú zložitosť $O(1)$.
+
+Operácia $Order(x, y)$ odpovedá, či $x < y$, teda či sa $x$ nachádza bližšie k začiatku spájaného zoznamu než $y$. Postupne prechádza zoznam, kým nenájde uzol $x$ alebo $y$. Ak ako prvý nájde uzol $x$, platí $x < y$. V opačnom prípade $x > y$.
+
+\SetAlgorithmName{Algoritmus}{Zoznam algoritmov} 
+
+\begin{algorithm}
+y.next = x.next\;
+\If {y.next != null}
+{
+    y.next.prev = y\;
+}
+\caption{Insert(x, y) [linked list]}
+\end{algorithm}
+
+\begin{algorithm}
+\If {x.prev != null}
+{
+    x.prev.next $\leftarrow$ x.next\;
+}
+\If {x.next != null}
+{
+    x.next.prev $\leftarrow$ x.prev\;
+}
+\caption{Remove(x) [linked list]}
+\end{algorithm}
+
+\begin{algorithm}
+node $\leftarrow$ linkedList.head\;
+\While{node != null}
+{
+    \If{node == x}
+    {
+        \Return{true}\;
+    }
+    \If{node == y}
+    {
+        \Return {false}\;
+    }
+    node $\leftarrow$ node.next\;
+}
+\caption{Order(x, y) [linked list]}
+\end{algorithm}
 
 
 \chapter{These are}
