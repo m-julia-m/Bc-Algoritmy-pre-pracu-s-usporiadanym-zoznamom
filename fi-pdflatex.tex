@@ -131,18 +131,23 @@
 \textbf{Lineárne usporiadaná množina} $M$ označuje množinu, v ktorej sú každé 2 rôzne prvky porovnateľné a platí $\forall x, y, z \in M : ((x < y) \land (y < z)) \implies (x < z)$. Môžeme si ju predstaviť ako reťazec prvkov $x_1 < x_2 < \ldots < x_m$. Prvok $x$ je \emph{predchodca} prvku $y$, ak $(x < y)$. Analogicky, prvok $x$ je \emph{nasledovník} prvku $y$, práve ak $(y < x)$.
 Hovoríme, že prvok $x$ je \emph{priamy predchodca} prvku $y$, ak platí $\nexists z \in M: (x < z < y)$, respektíve prvok $x$ je \emph{priamy nasledovník} prvku $y$, ak platí $\nexists z \in M: (y < z < x)$.\\
 
-\textbf{Usporiadaný zoznam} (order data structure) definujeme ako dátovú štruktúru, ktorá uchováva lineárne usporiadanú množinu objektov $M$ a môžeme na nej vykonávať operácie:
+\textbf{Usporiadaný zoznam} (order data structure) definujeme ako dátovú štruktúru, ktorá uchováva neprázdnu \textit{lineárne usporiadanú množinu objektov} $M$ a môžeme na nej vykonávať operácie:
 \begin{enumerate}
-    \item \emph{Insert(x, y)}: vkladá do množiny $M$ nový objekt $y$ ako priameho nasledovníka existujúceho objektu $x$ z množiny $M$. Po vykonaní operácie platí:
+    \item \textit{Insert(x, y)}: vkladá do množiny $M$ nový objekt $y$ ako priameho nasledovníka existujúceho objektu $x$ z množiny $M$. Po vykonaní operácie platí:
     \begin{compactitem}
-    \item $x < y$
-    \item $\forall z \in M: (z < x) \implies (z < y) $
-    \item $\forall z \in M: (x < z) \land (z \neq y) \implies (y < z)$
+        \item $x < y$
+        \item $\forall z \in M: (z < x) \implies (z < y) $
+        \item $\forall z \in M: (x < z) \land (z \neq y) \implies (y < z)$
     \end{compactitem}
 
-    \item \emph{Delete(x)}: odstraňuje z množiny $M$ existujúci objekt $x$.
-    \item \emph{Order(x, y)}: odpovedá, či $x$ je predchodca objektu $y$ pre existujúce objekty $x$ aj $y$ z množiny $M$.
+    \item \textit{Delete(x)}: odstraňuje z množiny $M$ existujúci objekt $x$.
+    \item \textit{Order(x, y)}: odpovedá, či $x$ je predchodca objektu $y$ pre existujúce objekty $x$ aj $y$ z množiny $M$.
 \end{enumerate}
+Predpokladáme, že:
+\begin{compactitem}
+    \item Štruktúra je inicializovaná operáciou \textit{Initialize(x)} a po inicializácii množina $M$ obsahuje objekt x.
+    \item Štruktúra nikdy neostane s prázdnou množinou objektov.\\
+\end{compactitem}
 
 Príklad 1:
 Máme usporiadaný zoznam s množinou objektov $A < B < C$ a vykonávame na ňom nasledovné operácie v poradí v akom sú uvedené:\\
@@ -186,27 +191,56 @@ Operácia $Order(x, y)$ odpovedá, či $x < y$, teda či sa $x$ nachádza bliž�
 \SetAlgorithmName{Algoritmus}{Zoznam algoritmov} 
 
 \begin{algorithm}
+\SetKwInOut{Input}{input}
+\Input{x (ukazateľ na objekt v zozname),\\
+y  (ukazateľ na nový objekt),\\
+linkedList (spájaný zoznam objektov)}
+\hline\vspace{0.2em}
 y.next = x.next\;
-\If {y.next != null}
+\If {y.next == null}
+{
+    linkedList.tail = y
+}
+\Else
 {
     y.next.prev = y\;
 }
-\caption{Insert(x, y) [linked list]}
+y.prev = x\;
+x.next = y;
+\caption{Insert na spájanom zozname}
 \end{algorithm}
 
 \begin{algorithm}
-\If {x.prev != null}
+\SetKwInOut{Input}{input}
+\Input{x (ukazateľ na objekt v zozname),\\
+linkedList (spájaný zoznam objektov)}
+\hline\vspace{0.2em}
+\If {x.prev == null}
+{
+    linkedList.head $\leftarrow$ x.next\;
+}
+\Else
 {
     x.prev.next $\leftarrow$ x.next\;
 }
-\If {x.next != null}
+\If {x.next == null}
+{
+    linkedList.tail = x.prev\;
+}
+\Else
 {
     x.next.prev $\leftarrow$ x.prev\;
 }
-\caption{Remove(x) [linked list]}
+\caption{Remove na spájanom zozname}
 \end{algorithm}
 
 \begin{algorithm}
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\Input{x (ukazateľ na objekt v zozname),\\
+y  (ukazateľ na objekt v zoznamae),\\
+linkedList (spájaný zoznam objektov)}
+\Output{pravdivostná hodnota (x > y)}
+\hline\vspace{0.2em}
 node $\leftarrow$ linkedList.head\;
 \While{node != null}
 {
@@ -220,7 +254,7 @@ node $\leftarrow$ linkedList.head\;
     }
     node $\leftarrow$ node.next\;
 }
-\caption{Order(x, y) [linked list]}
+\caption{Order na spájanom zozname}
 \end{algorithm}
 
 
