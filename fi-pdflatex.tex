@@ -126,10 +126,24 @@
 \markright{\textsc{Úvod}}
 \addcontentsline{toc}{chapter}{Úvod}
 
+\chapter{Prehľadová kapitola}
+Usporiadaný zoznam \cite{paper1_ordered_list} (order data structure) je~dátová štruktúra, ktorá~uchováva úplné usporiadanie podliehajúce operáciám: Insert(X,~Y), Delete(X) a Order(X,~Y). Operácia Insert(X, Y) vkladá do~úplného usporiadanie nový prvok~Y bezprostredne za~prvok~X. Operácia Delete(X) odstraňuje z~úplného usporiadania prvok~X. Operácia Order(X,~Y) odpovedá, či v~úplnom usporiadaní prvok~X predchádza prvok~y.
+
+Cieľom tejto bakalárskej práce je popísať a~porovnať vybrané efektívne spôsoby implementácie usporiadaného zoznamu, konkrétne dátové štruktúry a~s~nimi spojené algoritmy z~vedeckých článkov \textit{Two~Simplified Algorithms for~Maintaining Order in~a~List} \cite{paper1_ordered_list} a~\textit{File Maintenance: When~in~Doubt, Change the~Layout!} \cite{paper2_file_maintenance}. Uvedené články sú veľmi stručné. Táto práca sa ich riešeniam preto venuje podrobnejšie, so~zámerom pomôcť čitateľovi jednoduchšie pochopiť fungovanie daných dátových štruktúr.
+
+Súčasťou bakalárskej práce je implementácia dátovej štruktúry popísanej v teoretickej časti a~tvorba vizualizačného nástroja, ktorý demonštruje priebeh realizácie operácií Insert, Delete a~Order.
+
+Jedno z~najefektívnejších riešení usporiadaného zoznamu pochádza už~z~roku~1988. Profesori Daniel D. Sleator a~Paul F. Dietz v`článku \textit{Two~Algorithms for~Maintaining Order in~a~List} \cite{paper3_1988} popisujú dva rôzne algoritmy. Prvý algoritmus umožňuje vykonávať operácie Insert, Delete a~Order s~konštantnou asymptotickou amortizovanou časovou zložitosťou O(n). Druhý algoritmus umožňuje vykonávať všetky operácie s~konštantnou asymptotickou časovou zložitosťou O(n) v najhoršom prípade. Táto práca sa zameriava na~novšie riešenia, na~základe zhodnotenia odborníkov z~oblasti:
+\uv{Známe optimálne riešenia od~Dietza a~Sealtora sú komplikované. Prezentujeme nové algoritmy, ktoré zodpovedajú medziam\footnote{Medze v tomto kontexte znamenajú časovú náročnosť operácií.} od~Dietza a~Sealtora. Naše riešenia sú jednoduché a~prezentujeme experimentálny dôkaz, ktorý napovedá, že~v~praxi fungujú lepšie.} \cite{paper1_ordered_list}
+
+Návrh implementácie vychádza z~existujúceho vizualizéru\footnote{Dostupné na \url{ https://justforfuncoding.github.io/BITvisualization/}.} operácií  range update a~range query na~binárne indexovanom strome, ktorý tiež vznikol ako~súčasť bakalárskej práce \cite{Kridl2022thesis}. Vizualizér sa spúšťa vo~webovom prehliadači. Na~výstavbu stránky je použitý jazyk HTML5 v~kombinácii s~jazykom JavaScript. Pre~docielenie príjemnejšieho vzhľadu~a správneho zvýraznenia jednotlivých častí je použité rozšírenie CSS. Samotné dátové štruktúry sú naprogramované v~jazyku Python pre~jednoduchú transformáciu pseudokódov na~funkčný Python kód.
+
+
 \chapter{Usporiadaný zoznam}
 
-\textbf{Lineárne usporiadaná množina} $M$ označuje množinu, v ktorej sú každé 2 rôzne prvky porovnateľné a platí $\forall x, y, z \in M : ((x < y) \land (y < z)) \implies (x < z)$. Môžeme si ju predstaviť ako reťazec prvkov $x_1 < x_2 < \ldots < x_m$. Prvok $x$ je \emph{predchodca} prvku $y$, ak $(x < y)$. Analogicky, prvok $x$ je \emph{nasledovník} prvku $y$, práve ak $(y < x)$.
-Hovoríme, že prvok $x$ je \emph{priamy predchodca} prvku $y$, ak platí $\nexists z \in M: (x < z < y)$, respektíve prvok $x$ je \emph{priamy nasledovník} prvku $y$, ak platí $\nexists z \in M: (y < z < x)$.\\
+\textbf{Lineráne usporiadaná množina} je množina, na ktorej je definované úplné usporiadanie. Usporiadanie je binárna relácia, ktorá je reflexívna, tranzitívna a antisymetrická. Usporiadanie budeme označovať symbolom $<$. Usporiadanie je úplné, ak každé dva prvky množiny sú porovnateľné, tj. x<y alebo y<x.
+
+V rámci ľubovoľnej množiny $M$ hovoríme, že prvok $x$ je \emph{priamy predchodca} prvku $y$, ak platí $x, y \in M, \nexists z \in M: (x < z < y)$, respektíve prvok $x$ je \emph{priamy nasledovník} prvku $y$, ak platí $x, y \in M, \nexists z \in M: (y < z < x)$.\\
 
 \textbf{Usporiadaný zoznam} (order data structure) definujeme ako dátovú štruktúru, ktorá uchováva neprázdnu \textit{lineárne usporiadanú množinu objektov} $M$ a môžeme na nej vykonávať operácie:
 \begin{enumerate}
@@ -178,7 +192,8 @@ Máme usporiadaný zoznam s množinou objektov $A < B < C$ a vykonávame na ňom
 
 % Operácii $Order(x, y)$ stačí porovnať indexy prvkov $x$ a $y$. Objekt uložený v poli na nižšom indexe predchádza prvok uložený na vyššom indexe. Preto platí $Order(x, y) \iff index(x) < index(y)$.
 
-\chapter{Implementácia spájaným zoznamom}
+
+\chapter{Spájaný zoznam}
 
 Jednou z možností implementácie usporiadaného zoznamu je ukladať objekty v obojsmerne spájanom zozname (doubly linked list). Každý uzol spájaného zoznamu reprezentuje jeden objekt a má odkaz na svojho priameho nasledovníka a priameho predchodcu. Poradie v akom sú objekty uložené v spájanom zozname odpovedá ich usporiadaniu od najmenšieho po najväčší.
 
@@ -256,6 +271,53 @@ node $\leftarrow$ linkedList.head\;
 }
 \caption{Order na spájanom zozname}
 \end{algorithm}
+
+
+\chapter{Spájaný zoznam s tagmi}
+
+V tejto kapitole sa budeme venovať riešeniu z článku \textit{Two Simplified Algorithms for Maintaining Order in a List} \cite{paper1_ordered_list}.
+
+Táto implementácia tiež vychádza z obojsmerne spájaného zoznamu, v ktorom poradie objektov v zozname zodpovedá ich usporiadaniu. Každý objektu v zozname má navyše priradený \textit{tag}. Tagy sú celé čísla a platí $x < y \iff x.tag < y.tag$, teda každý objekt má vyšší tag než jeho predchodca. Tagy v rámci zoznamu preto rastú smerom k poslednému objektu. Hodnoty tagov sú obmedzené na interval $[0, u]$, kde horná hranica $u$ je mocnina čísla 2. Tagy nám zjednodušujú operáciu Order (stačí porovnať tagy prvkov), no prinášajú nové otázky:
+\begin{compactenum}
+  \item voľba $u$
+  \item stratégia priraďovania tagov pre nové objekty
+  \item riešenie situácie, kedy pre nový objekt nemáme dostupný tag (rozdiel tagov jeho predchodcu a následníka je 1).
+\end{compactenum}
+
+
+\section*{Rekonštrukcia zoznamu}
+
+Aktuálny počet objektov v zozname označujeme n. Počet objektov pri poslednej \textit{rekonštrukcii (rebuild)} zoznamu označujeme N. Rekonštrukciu zoznamu realizujeme, keď je porušený \textit{invariant 1:} $N/2 <= n <= 2N$.
+
+Pri rekonštrukcii priraďujeme $N = n$ a na základe nového $N$ priradíme $u = N^2$.
+
+Príklad 2.:
+Tabuľka nižšie ukazuje, ako sa menia hodnoty $n, N,$ a $u$ pri vykonaní operácií:
+\begin{table}
+\begin{tabularx}{\textwidth}{| l | l | l |}
+    % \toprule
+    operácia & množina objektov po operácii & $n$ & $N$ & $u$ & poznámka \\
+    \midrule
+    $Initialize(X)$ & $X$ & $1$ & $1$ & $2$ & inicializácia usporiadaného zoznamu\\
+    $Insert(X, A)$ & $X < A$ & $2$ & $2$ & $4$ & rekonštrukcia\\
+    $Insert(A, B)$ & $X < A < B$ & $3$ & $2$ & $4$ & \\
+    $Insert(B, C)$ & $X < A < B < C$ & $4$ & $2$ & $4$ & \\
+    $Insert(X, Y)$ & $X < Y < A < B < C$ & $5$ & $5$ & $25$ & rekonštrukcia\\
+
+
+    % \bottomrule
+  \end{tabularx}
+\end{table}
+
+
+Rekonštrukcia 
+
+
+
+
+
+
+
 
 
 \chapter{These are}
@@ -543,13 +605,14 @@ fonts will become available: \[
 }.
 
 \chapter{Inserting the bibliography}
+
 After linking a bibliography data\-base files to the document using
 the \verb"\"\texttt{thesis\discretionary{-}{}{}setup\{bib\discretionary{=}{=}{=}%
 \{\textit{file1},\textit{file2},\,\ldots\,\}\}} command, you can
 start citing the entries. This is just dummy text
 \parencite{paper1_ordered_list} lightly sprinkled with citations
 \parencite[p.~123]{paper1_ordered_list}. Several sources can be cited at
-once: \cite{paper1_ordered_list,paper2_file_maintenance,wiki_order-maintenance_problem}.
+once: \cite{paper1_ordered_list,paper2_file_maintenance,paper2_file_maintenance}.
 \citetitle{paper1_ordered_list} was written by \citeauthor{paper1_ordered_list} in
 \citeyear{paper1_ordered_list}. We can also produce \textcite{paper1_ordered_list}%
 \ or %% Let us define a compound command:
@@ -560,11 +623,11 @@ once: \cite{paper1_ordered_list,paper2_file_maintenance,wiki_order-maintenance_p
 citation into the footnote\footfullcite{paper1_ordered_list}.
 
 The \verb"\nocite" command will not generate any
-output\nocite{wiki_list-labeling}, but it will insert its arguments into
+output\nocite{paper1_ordered_list}, but it will insert its arguments into
 the bibliography. The \verb"\nocite{*}" command will insert all the
 records in the bibliography database file into the bibliography.
 Try uncommenting the command
-\nocite{*} %% was cpmmented out originally
+%%\nocite{*}
 and watch the bibliography section come apart at the seams.
 
 When typesetting the document for the first time, citing a
