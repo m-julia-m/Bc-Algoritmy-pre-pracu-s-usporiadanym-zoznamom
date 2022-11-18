@@ -127,13 +127,13 @@
 \addcontentsline{toc}{chapter}{Úvod}
 
 \chapter{Prehľadová kapitola}
-Usporiadaný zoznam \cite{paper1_ordered_list} (order data structure) je~dátová štruktúra, ktorá~uchováva úplné usporiadanie podliehajúce operáciám: Insert(X,~Y), Delete(X) a Order(X,~Y). Operácia Insert(X, Y) vkladá do~úplného usporiadanie nový prvok~Y bezprostredne za~prvok~X. Operácia Delete(X) odstraňuje z~úplného usporiadania prvok~X. Operácia Order(X,~Y) odpovedá, či v~úplnom usporiadaní prvok~X predchádza prvok~y.
+Usporiadaný zoznam (order data structure) \cite{paper1_ordered_list}  je~dátová štruktúra, ktorá~uchováva úplné usporiadanie podliehajúce operáciám: Insert(X,~Y), Delete(X) a Order(X,~Y). Operácia Insert(X, Y) vkladá do~úplného usporiadanie nový prvok~Y bezprostredne za~prvok~X. Operácia Delete(X) odstraňuje z~úplného usporiadania prvok~X. Operácia Order(X,~Y) odpovedá, či v~úplnom usporiadaní prvok~X predchádza prvok~Y.
 
 Cieľom tejto bakalárskej práce je popísať a~porovnať vybrané efektívne spôsoby implementácie usporiadaného zoznamu, konkrétne dátové štruktúry a~s~nimi spojené algoritmy z~vedeckých článkov \textit{Two~Simplified Algorithms for~Maintaining Order in~a~List} \cite{paper1_ordered_list} a~\textit{File Maintenance: When~in~Doubt, Change the~Layout!} \cite{paper2_file_maintenance}. Uvedené články sú veľmi stručné. Táto práca sa ich riešeniam preto venuje podrobnejšie, so~zámerom pomôcť čitateľovi jednoduchšie pochopiť fungovanie daných dátových štruktúr.
 
-Súčasťou bakalárskej práce je implementácia dátovej štruktúry popísanej v teoretickej časti a~tvorba vizualizačného nástroja, ktorý demonštruje priebeh realizácie operácií Insert, Delete a~Order.
+Súčasťou bakalárskej práce je implementácia popísanej dátovej štruktúry a~tvorba vizualizačného nástroja, ktorý demonštruje priebeh realizácie operácií Insert, Delete a~Order.
 
-Jedno z~najefektívnejších riešení usporiadaného zoznamu pochádza už~z~roku~1988. Profesori Daniel D. Sleator a~Paul F. Dietz v`článku \textit{Two~Algorithms for~Maintaining Order in~a~List} \cite{paper3_1988} popisujú dva rôzne algoritmy. Prvý algoritmus umožňuje vykonávať operácie Insert, Delete a~Order s~konštantnou asymptotickou amortizovanou časovou zložitosťou O(n). Druhý algoritmus umožňuje vykonávať všetky operácie s~konštantnou asymptotickou časovou zložitosťou O(n) v najhoršom prípade. Táto práca sa zameriava na~novšie riešenia, na~základe zhodnotenia odborníkov z~oblasti:
+Jedno z~najefektívnejších riešení usporiadaného zoznamu pochádza už~z~roku~1988. Profesori Daniel D. Sleator a~Paul F. Dietz v článku \textit{Two~Algorithms for~Maintaining Order in~a~List} \cite{paper3_1988} popisujú dva rôzne algoritmy. Prvý algoritmus umožňuje vykonávať operácie Insert, Delete a~Order s~konštantnou asymptotickou amortizovanou časovou zložitosťou O(n). Druhý algoritmus umožňuje vykonávať všetky operácie s~konštantnou asymptotickou časovou zložitosťou O(n) v najhoršom prípade. Táto práca sa zameriava na~novšie riešenia, na~základe zhodnotenia odborníkov z~oblasti:
 \uv{Známe optimálne riešenia od~Dietza a~Sealtora sú komplikované. Prezentujeme nové algoritmy, ktoré zodpovedajú medziam\footnote{Medze v tomto kontexte znamenajú časovú náročnosť operácií.} od~Dietza a~Sealtora. Naše riešenia sú jednoduché a~prezentujeme experimentálny dôkaz, ktorý napovedá, že~v~praxi fungujú lepšie.} \cite{paper1_ordered_list}
 
 Návrh implementácie vychádza z~existujúceho vizualizéru\footnote{Dostupné na \url{ https://justforfuncoding.github.io/BITvisualization/}.} operácií  range update a~range query na~binárne indexovanom strome, ktorý tiež vznikol ako~súčasť bakalárskej práce \cite{Kridl2022thesis}. Vizualizér sa spúšťa vo~webovom prehliadači. Na~výstavbu stránky je použitý jazyk HTML5 v~kombinácii s~jazykom JavaScript. Pre~docielenie príjemnejšieho vzhľadu~a správneho zvýraznenia jednotlivých častí je použité rozšírenie CSS. Samotné dátové štruktúry sú naprogramované v~jazyku Python pre~jednoduchú transformáciu pseudokódov na~funkčný Python kód.
@@ -174,10 +174,10 @@ Máme usporiadaný zoznam s množinou objektov $A < B < C$ a vykonávame na ňom
     $Insert(B, E)$ &  & $A < B < E < D < C$\\
     $Order(D, E)$ & $false$ & $A < B < E < D < C$\\
     $Order(E, C)$ & $true$ & $A < B < E < D < C$\\
-    $Remove(A)$ &  & $B < E < D < C$\\
+    $Delete(A)$ &  & $B < E < D < C$\\
     $Insert(B, C)$ & \multicolumn{2}{l|}{\textit{chyba/ nedefinované chovanie (množina už obsahuje C)}}\\
     $Order(A, B)$ & \multicolumn{2}{l|}{\textit{chyba/ nedefinované chovanie (množina neobsahuje A)}}\\
-    $Remove(F)$ & \multicolumn{2}{l|}{\textit{chyba/ nedefinované chovanie (množina neobsahuje F)}}\\
+    $Delete(F)$ & \multicolumn{2}{l|}{\textit{chyba/ nedefinované chovanie (množina neobsahuje F)}}\\
     % \bottomrule
   \end{tabularx}
 \end{table}
@@ -187,7 +187,7 @@ Máme usporiadaný zoznam s množinou objektov $A < B < C$ a vykonávame na ňom
 
 % Operácia $Insert(x, y)$ vkladá nový objekt $y$ do poľa hneď za $x$. Elementy poľa napravo od $x$ musíme posunúť o jednu pozíciu doprava. Preto má táto operácia časovú zložitosť $O(n)$.
 
-% Operácia $Remove(x)$ odstraňuje objekt $x$ z poľa. 
+% Operácia $Delete(x)$ odstraňuje objekt $x$ z poľa. 
 % Aby sme zaplnili prázdne miesto, musíme všetky objekty v poli napravo od $x$ posunúť o jednu pozíciu doľava. Operácia má preto časovú zložitosť $O(n)$.
 
 % Operácii $Order(x, y)$ stačí porovnať indexy prvkov $x$ a $y$. Objekt uložený v poli na nižšom indexe predchádza prvok uložený na vyššom indexe. Preto platí $Order(x, y) \iff index(x) < index(y)$.
@@ -199,7 +199,7 @@ Jednou z možností implementácie usporiadaného zoznamu je ukladať objekty v 
 
 Operácia $Insert(x, y)$ vkladá nový objekt $y$ do zoznamu ako nasledovníka $x$. Stačí nastaviť nové vzťahy priamych nasledovníkov a predchodcov pre uzol $y$ a uzly s ním susediace. Operácia má preto časovú zložitosť $O(1)$.
 
-Operácia $Remove(x)$ odstraňuje $x$ zo zoznamu. Opäť stačí nastaviť nové vzťahy priamych prechodcov a následníkov pre uzly susediace s $x$. Operácia má preto časovú zložitosť $O(1)$.
+Operácia $Delete(x)$ odstraňuje $x$ zo zoznamu. Opäť stačí nastaviť nové vzťahy priamych prechodcov a následníkov pre uzly susediace s $x$. Operácia má preto časovú zložitosť $O(1)$.
 
 Operácia $Order(x, y)$ odpovedá, či $x < y$, teda či sa $x$ nachádza bližšie k začiatku spájaného zoznamu než $y$. Postupne prechádza zoznam, kým nenájde uzol $x$ alebo $y$. Ak ako prvý nájde uzol $x$, platí $x < y$. V opačnom prípade $x > y$.
 
@@ -211,17 +211,17 @@ Operácia $Order(x, y)$ odpovedá, či $x < y$, teda či sa $x$ nachádza bliž�
 y  (ukazateľ na nový objekt),\\
 linkedList (spájaný zoznam objektov)}
 \hline\vspace{0.2em}
-y.next = x.next\;
+y.next \leftarrow x.next\;
 \If {y.next == null}
 {
-    linkedList.tail = y
+    linkedList.tail \leftarrow y\;
 }
 \Else
 {
-    y.next.prev = y\;
+    y.next.prev \leftarrow y\;
 }
-y.prev = x\;
-x.next = y;
+y.prev \leftarrow x\;
+x.next \leftarrow y\;
 \caption{Insert na spájanom zozname}
 \end{algorithm}
 
@@ -240,19 +240,19 @@ linkedList (spájaný zoznam objektov)}
 }
 \If {x.next == null}
 {
-    linkedList.tail = x.prev\;
+    linkedList.tail \leftarrow x.prev\;
 }
 \Else
 {
     x.next.prev $\leftarrow$ x.prev\;
 }
-\caption{Remove na spájanom zozname}
+\caption{Delete na spájanom zozname}
 \end{algorithm}
 
 \begin{algorithm}
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
 \Input{x (ukazateľ na objekt v zozname),\\
-y  (ukazateľ na objekt v zoznamae),\\
+y  (ukazateľ na objekt v zozname),\\
 linkedList (spájaný zoznam objektov)}
 \Output{pravdivostná hodnota (x > y)}
 \hline\vspace{0.2em}
@@ -277,47 +277,215 @@ node $\leftarrow$ linkedList.head\;
 
 V tejto kapitole sa budeme venovať riešeniu z článku \textit{Two Simplified Algorithms for Maintaining Order in a List} \cite{paper1_ordered_list}.
 
-Táto implementácia tiež vychádza z obojsmerne spájaného zoznamu, v ktorom poradie objektov v zozname zodpovedá ich usporiadaniu. Každý objektu v zozname má navyše priradený \textit{tag}. Tagy sú celé čísla a platí $x < y \iff x.tag < y.tag$, teda každý objekt má vyšší tag než jeho predchodca. Tagy v rámci zoznamu preto rastú smerom k poslednému objektu. Hodnoty tagov sú obmedzené na interval $[0, u]$, kde horná hranica $u$ je mocnina čísla 2. Tagy nám zjednodušujú operáciu Order (stačí porovnať tagy prvkov), no prinášajú nové otázky:
+Táto implementácia tiež vychádza z obojsmerne spájaného zoznamu, v ktorom poradie objektov v zozname zodpovedá ich usporiadaniu. Každý objektu v zozname má navyše priradený \textit{tag}. Tagy sú celé čísla a platí $x < y \iff x.tag < y.tag$, teda každý objekt má vyšší tag než jeho predchodca. Tagy v rámci zoznamu preto rastú smerom k poslednému objektu. Hodnoty tagov sú obmedzené na interval $[0, u]$. Tagy nám zjednodušujú operáciu Order (stačí porovnať tagy prvkov), no prinášajú nové otázky:
 \begin{compactenum}
-  \item voľba $u$
+  \item voľba hornej hranice intervalu tagov $u$
   \item stratégia priraďovania tagov pre nové objekty
   \item riešenie situácie, kedy pre nový objekt nemáme dostupný tag (rozdiel tagov jeho predchodcu a následníka je 1).
 \end{compactenum}
 
+\subsection*{Analógia s binárnym stromom}
+Keď zapisujeme tagy v binárnej sústave, môžeme si štruktúru predtaviť ako prefixový strom, ktorého listami sú objekty a cesta od koreňa k listu odpovedá tagu dosiahnutého objektu, viď obrázok nižšie.
 
-\section*{Rekonštrukcia zoznamu}
+\includegraphics[width=\textwidth]{graphics/graphviz.png}
+
+Pri implementácii nám stačí uchovávať spájaný zoznam objektov, predstava virtuálneho stromu nám len pomáha pri teoretickom skúmaní štruktúry, nazývame ho preto \textit{virtuálny strom}. Keďze každý bit tagu je buď $0$ alebo $1$, je tento strom binárny a má hĺbku odpovedajúcu dĺžke reťazca binárneho zápisu tagu, t.j. $\log{u}$.
+
+Každý vnútorný uzol tohoto stromu identifikuje \textit{rozhranie tagov}, ktorým je prefixom. Toto rozhranie tagov odpovedá podzoznamu (sublist) objektov, ktoré sú listami dosiahnuteľnými z tohoto uzlu. Každý objekt patrí do $\log{u}$ takýchto rozhraní tagov.
+
+\subsection*{Rekonštrukcia zoznamu (rebuild)}
 
 Aktuálny počet objektov v zozname označujeme n. Počet objektov pri poslednej \textit{rekonštrukcii (rebuild)} zoznamu označujeme N. Rekonštrukciu zoznamu realizujeme, keď je porušený \textit{invariant 1:} $N/2 <= n <= 2N$.
 
-Pri rekonštrukcii priraďujeme $N = n$ a na základe nového $N$ priradíme $u = N^2$.
+Pri rekonštrukcii priraďujeme $N = n$. Na základe nového $N$ priraďujeme $u = N^c$, kde $c$ je konštanta. V rámci tejto práce pracujeme s $c = 2$, takže $u = N^2$. Následne prechádzame zoznam objektov a priraďujeme im nové tagy z intervalu $[0, u]$ s rovnomernými medzerami.
 
 Príklad 2.:
 Tabuľka nižšie ukazuje, ako sa menia hodnoty $n, N,$ a $u$ pri vykonaní operácií:
 \begin{table}
-\begin{tabularx}{\textwidth}{| l | l | l |}
+\begin{tabularx}{\textwidth}{| l | l | l | l | l | l}
     % \toprule
-    operácia & množina objektov po operácii & $n$ & $N$ & $u$ & poznámka \\
+    operácia & usporiadanie & $n$ & $N$ & $u$ & poznámka \\
     \midrule
-    $Initialize(X)$ & $X$ & $1$ & $1$ & $2$ & inicializácia usporiadaného zoznamu\\
+    $Initialize(X)$ & $X$ & $1$ & $1$ & $2$ & inicializácia\\
     $Insert(X, A)$ & $X < A$ & $2$ & $2$ & $4$ & rekonštrukcia\\
     $Insert(A, B)$ & $X < A < B$ & $3$ & $2$ & $4$ & \\
     $Insert(B, C)$ & $X < A < B < C$ & $4$ & $2$ & $4$ & \\
     $Insert(X, Y)$ & $X < Y < A < B < C$ & $5$ & $5$ & $25$ & rekonštrukcia\\
-
-
+    $Delete(C)$ & $X < Y < A < B$ & $4$ & $5$ & $25$ & \\
+    $Delete(B)$ & $X < Y < A $ & $3$ & $5$ & $25$ & \\
+    $Delete(A)$ & $X < Y$ & $2$ & $2$ & $4$ & rekonštrukcia\\
     % \bottomrule
   \end{tabularx}
 \end{table}
 
 
-Rekonštrukcia 
+\section{Insert(x, y)}
+
+Keď vkladáme do zoznamu nový objekt $y$ medzi objekty $x$ a $z$, musíme mu priradiť tag splňajúci $x.tag < y.tag < z.tag$ (respektíve $x.tag < y.tag <= u$, ak $y$ je posledný prvok zoznamu).
+Pokiaľ nie je dostupný žiadny tag z daného rozpätia (rozdiel medzi tagmi $x$ a $z$ je 1, respektíve $x.tag = u$), musíme pretagovať časť zoznamu (relabeling).
+
+Ak je po vložení nového objektu porušený invariant $N/2 <= n <= 2N$, realizujeme rekonštrukciu zoznamu.
+
+\subsection{Stratégia voľby tagov}
+
+\textit{Two Simplified Algorithms for Maintaining Order in a List} \cite{paper1_ordered_list} experimentálne porovnáva 2 stratégie výberu nového tagu:
+1. Po sebe idúce tagy (consecutive inserts): tag nového objektu je o 1 vyšší než tag jeho predchodcu.
+2. Priemerované tagy (average inserts): tag nového objektu je priemer jeho susedov.
+Pri stratégii po sebe idúcich tagov musíme pretagovať menší interval každý druhý insert. Pri stratégii priemerovaných tagov musíme pretagovať väčšie intervaly, no menej často.
+Používanie priemerovaných tagov sa ukázalo o konštantu rýchlejšie než po sebe idúce tagy. Časová náročnosť tohoto riešenia však nie je závislá na stratégii voľby tagov. 
+
+\subsection{Pretagovanie (relabeling)}
+Pretagovanie pri vkladaní objektu $y$ za $x$ pozostáva z 2 častí:
+\begin{compactenum}
+    \item Nájsť najmenšie rozhranie tagov, do ktorého patrí $x$ a \textit{nepreteká}.
+    \item Priradenie nových tagov objektom v nájdenom rozhraní.
+\end{compactenum}
+Pri hľadaní najmenšieho rozhrania, ktoré nepreteká, postupujeme vo virtuálnom strome od listu objektu $x$ smerom ku koreňu. Skúmané rozhrania tagov teda rastú geometricky, ich veľkosť odpovedá $2^i$, kde $i$ je vzdialenosť od listov vo virtuálnom strome. Zastavíme sa na prvom rozhraní, ktoré nepreteká.
+Hovoríme, že rozhranie tagov \textit{preteká (overflow)}, ak je jeho \textit{hustota zaplnenia (density)} vyššia ako \textit{hranica pretečenia (overflow threshold)}. \textit{Hustota zaplenia} rozhrania tagov je podiel využitých tagov z tohoto rozhrania. Hustotu zaplnenia počítame prechádzaním objektov v tomto rozhraní. Hranicu pretečenia počítame nasledovne:
+\begin{compactenum}
+    \item Pre rozhranie tagov s veľkosťou $2^0 = 1$ (listy vo virtuálnom strome) je hranica pretečenia $T_0 = 1$.
+    \item Inak, pre rozhrania veľkosti $2^i$, $T_i = T_{i-1} / T = T^{-i}$.
+\end{compactenum}
+Vďaka invariantu $N/2 <= n <= 2N$ koreň virtuálneho stromu nikdy nepretečie, takže vždy môžeme v najhoršom prípade pretagovať celý zoznam.
+Po nájdení rozhrania, ktoré chceme pretagovať, priraďujeme objektom z tohoto rozhrania nové tagy, ktoré sú rovnomerne rozdistribuované v rámci daného rozhrania. Nový objekt $y$ môžeme pridať do zoznamu už pri priraďovaní nových tagov.
+
+\section{Delete(x)}
+Pri odstraňovaní objektu stačí nastaviť nové vzťahy priameho prechodcu/následníka pre uzly susediace s $x$.
+
+Ak je po odstránení porušený invariant $N/2 <= n <= 2N$, realizujeme rekonštrukciu zoznamu.
+
+\section{Order(x, y)}
+K rozhodnutiu, či $x$ je predchodcom $y$, nám pomáhajú pridané tagy. Platí $x.tag < y.tag \iff x < y$, teda len porovnávame tagy $x$ a $y$.
 
 
 
+\begin{algorithm}
+\SetKwInOut{Input}{input}
+\Input{linkedList (spájaný zoznam objektov),\\
+n (počet objektov v zozname),\\
+N (počet objektov pri poslednej rekonštrukcii zoznamu),\\
+u (horná hranicca tagov)}
+\hline\vspace{0.2em}
+N \leftarrow n\;
+
+u \leftarrow N^2\;
+
+tagOffset \leftarrow u / n\; \tcc*[h]{floored division}
+
+tag \leftarrow 0\;
+
+\ForEach {node in linkedList}
+{
+    node.tag \leftarrow tag\;
+    
+    tag \leftarrow tag + tagOffset\;
+}
+
+\caption{Rebuild/rekonštrukcia spájaného zoznamu s tagmi}
+\end{algorithm}
+
+\begin{algorithm}
+\SetKwInOut{Input}{input}
+\Input{x (ukazateľ na objekt v zozname),\\
+y  (ukazateľ na nový objekt),\\
+linkedList (spájaný zoznam objektov s tagmi),\\
+n (počet objektov v zozname),\\
+N (počet objektov pri poslednej rekonštrukcii zoznamu),\\
+u (horná hranicca tagov)}
+\hline\vspace{0.2em}
+z \leftarrow x.next\;
+
+\If{(z == null and x.tag == u) or (x.tag + 1 == z.tag)}
+{
+    Relabel(x)\;
+}
+
+y.tag \leftarrow ChooseNewTagAfter(x)\;
+
+y.next \leftarrow x.next\;
+\If {y.next == null}
+{
+    linkedList.tail \leftarrow y\;
+}
+\Else
+{
+    y.next.prev \leftarrow y\;
+}
+y.prev \leftarrow x\;
+x.next \leftarrow y\;
 
 
+n \leftarrow n + 1\;
+
+\If{!( N/2 <= n <= 2N)}
+{
+    Rebuild()\;
+}
+\caption{Insert na spájanom zozname s tagmi}
+\end{algorithm}
 
 
+\begin{algorithm}
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\Input{x (ukazateľ na objekt v zozname, za ktorým cheme vybrať tag)}
+\Output{tag pre nový objekt vkladaný za x}
+\hline\vspace{0.2em}
+minTag \leftarrow x.tag + 1\;
+
+maxTag \leftarrow u\;
+
+\If {x.next != null}
+{
+    maxTag \leftarrow x.next.tag - 1\;
+}
+
+\Return {(minTag + maxTag) / 2}; \tcc{floored division}
+\caption{ChooseNewTag na spájanom zozname s tagmi}
+\end{algorithm}
+
+
+\begin{algorithm}
+\SetKwInOut{Input}{input}
+\Input{x (ukazateľ na objekt v zozname),\\
+linkedList (spájaný zoznam objektov),\\
+n (počet objektov v zozname),\\
+N (počet objektov pri poslednej rekonštrukcii zoznamu)}
+\hline\vspace{0.2em}
+\If {x.prev == null}
+{
+    linkedList.head $\leftarrow$ x.next\;
+}
+\Else
+{
+    x.prev.next $\leftarrow$ x.next\;
+}
+\If {x.next == null}
+{
+    linkedList.tail \leftarrow x.prev\;
+}
+\Else
+{
+    x.next.prev $\leftarrow$ x.prev\;
+}
+
+n \leftarrow n - 1\;
+
+\If{!( N/2 <= n <= 2N)}
+{
+    Rebuild()\;
+}
+\caption{Delete na spájanom zozname s tagmi}
+\end{algorithm}
+
+\begin{algorithm}
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\Input{x (ukazateľ na objekt v zozname),\\
+y  (ukazateľ na objekt v zozname)}
+\Output{pravdivostná hodnota (x > y)}
+\hline\vspace{0.2em}
+\Return {x.tag < y.tag}\;
+\caption{Order na spájanom zozname s tagmi}
+\end{algorithm}
 
 
 \chapter{These are}
