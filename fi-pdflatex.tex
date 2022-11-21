@@ -290,17 +290,17 @@ Táto implementácia tiež vychádza z obojsmerne spájaného zoznamu, v ktorom 
 \end{compactenum}
 
 \subsection{Analógia s binárnym stromom}
-Keď zapisujeme tagy v binárnej sústave, môžeme si štruktúru predtaviť ako prefixový strom, ktorého listami sú objekty a cesta od koreňa k listu odpovedá tagu dosiahnutého objektu, viď obrázok nižšie:
+Keď zapisujeme tagy v binárnej sústave, môžeme si štruktúru predtaviť ako prefixový strom, ktorého listami sú objekty, a cesta od koreňa k listu odpovedá tagu dosiahnutého objektu, viď obrázok nižšie:
 
 \includegraphics[width=\textwidth]{graphics/graphviz.png}
 
 Pri implementácii nám stačí uchovávať spájaný zoznam objektov, predstava virtuálneho stromu nám len pomáha pri teoretickom skúmaní štruktúry, nazývame ho preto \textit{virtuálny strom}. Keďze každý bit tagu je buď $0$ alebo $1$, je tento strom binárny a má hĺbku odpovedajúcu dĺžke reťazca binárneho zápisu tagu, t.j. $\log{u}$.
 
-Každý vnútorný uzol tohoto stromu identifikuje \textit{rozhranie tagov}, ktorým je prefixom. Toto rozhranie tagov odpovedá podzoznamu (sublist) objektov, ktoré sú listami dosiahnuteľnými z tohoto uzlu. Každý objekt patrí do $\log{u}$ takýchto rozhraní tagov.
+Každý vnútorný uzol tohoto stromu identifikuje \textit{rozhranie tagov}, ktorým je prefixom. Toto rozhranie tagov odpovedá podzoznamu objektov (sublist), ktoré sú listami dosiahnuteľnými z tohoto uzlu. Každý objekt patrí do $\log{u}$ takýchto rozhraní tagov.
 
 \subsection{Rekonštrukcia zoznamu (rebuild)}
 
-Aktuálny počet objektov v zozname označujeme n. Počet objektov pri poslednej \textit{rekonštrukcii (rebuild)} zoznamu označujeme N. Rekonštrukciu zoznamu realizujeme, keď je porušený \textit{invariant 1:} $N/2 <= n <= 2N$.
+Aktuálny počet objektov v zozname označujeme $n$. Počet objektov pri poslednej \textit{rekonštrukcii (rebuild)} zoznamu označujeme $N$. Rekonštrukciu zoznamu realizujeme, keď je porušený \textit{invariant 1:} $N/2 <= n <= 2N$.
 
 Pri rekonštrukcii priraďujeme $N = n$. Na základe nového $N$ priraďujeme $u = N^c$, kde $c$ je konštanta. V rámci tejto práce pracujeme s $c = 2$, takže $u = N^2$. Následne prechádzame zoznam objektov a priraďujeme im nové tagy z intervalu $[0, u]$ s rovnomernými medzerami.
 
@@ -324,7 +324,7 @@ Tabuľka nižšie ukazuje, ako sa menia hodnoty $n, N,$ a $u$ pri vykonaní oper
 \end{table}
 
 \begin{algorithm}
-\SetKwInOut{Input}{input}
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
 \Input{linkedList (spájaný zoznam objektov),\\
 n (počet objektov v zozname),\\
 N (počet objektov pri poslednej rekonštrukcii zoznamu),\\
@@ -350,7 +350,7 @@ $tag \leftarrow 0$\;
 
 \section{Insert(x, y)}
 
-Keď vkladáme do zoznamu nový objekt $y$ medzi objekty $x$ a $z$, musíme mu priradiť tag splňajúci $x.tag < y.tag < z.tag$ (respektíve $x.tag < y.tag <= u$, ak $y$ je posledný prvok zoznamu).
+Keď vkladáme do zoznamu nový objekt $y$ medzi objekty $x$ a $z$, musíme mu priradiť tag splňajúci $x.tag < y.tag < z.tag$ (respektíve $x.tag < y.tag <= u$, ak $x$ nemá následníka).
 Pokiaľ nie je dostupný žiadny tag z daného rozpätia (rozdiel medzi tagmi $x$ a $z$ je 1, respektíve $x.tag = u$), musíme pretagovať časť zoznamu (relabeling).
 
 Ak je po vložení nového objektu porušený invariant $N/2 <= n <= 2N$, realizujeme rekonštrukciu zoznamu.
@@ -398,10 +398,12 @@ $n \leftarrow n + 1$\;
 \subsection*{Stratégia voľby tagov}
 
 \textit{Two Simplified Algorithms for Maintaining Order in a List} \cite{paper1_ordered_list} experimentálne porovnáva 2 stratégie výberu nového tagu:
-1. Po sebe idúce tagy (consecutive inserts): tag nového objektu je o 1 vyšší než tag jeho predchodcu.
-2. Priemerované tagy (average inserts): tag nového objektu je priemer jeho susedov.
-Pri stratégii po sebe idúcich tagov musíme pretagovať menší interval každý druhý insert. Pri stratégii priemerovaných tagov musíme pretagovať väčšie intervaly, no menej často.
-Používanie priemerovaných tagov sa ukázalo o konštantu rýchlejšie než po sebe idúce tagy. Časová náročnosť tohoto riešenia však nie je závislá na stratégii voľby tagov.
+\begin{compactenum}
+  \item Po sebe idúce tagy (consecutive inserts): tag nového objektu je o 1 vyšší než tag jeho predchodcu.
+  \item Priemerované tagy (average inserts): tag nového objektu je priemer jeho susedov.
+\end{compactenum}
+Pri stratégii po sebe idúcich tagov musíme pretagovať menší interval každý druhý insert. Pri stratégii priemerovaných tagov musíme pretagovať väčšie intervaly, no menej často. Používanie priemerovaných tagov sa ukázalo o konštantu rýchlejšie než po sebe idúce tagy.
+% Časová náročnosť tohoto riešenia však nie je závislá na stratégii voľby tagov.
 
 \begin{algorithm}
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
@@ -418,23 +420,24 @@ $maxTag \leftarrow u$\;
 }
 
 \Return {(minTag + maxTag) / 2}; \tcp{floored division}
-\caption{Voľba tagu pre nový objekt (ChooseNewTag) }
+\caption{ChooseNewTag / voľba tagu pre nový objekt  }
 \end{algorithm}
 
 \subsection{Pretagovanie (relabeling)}
 Pretagovanie pri vkladaní objektu $y$ za $x$ pozostáva z 2 častí:
 \begin{compactenum}
-    \item Nájsť najmenšie rozhranie tagov, do ktorého patrí $x$ a \textit{nepreteká}.
+    \item Nájdenie najmenšieho rozhrania tagov, do ktorého patrí $x$ a \textit{nepreteká}.
     \item Priradenie nových tagov objektom v nájdenom rozhraní.
 \end{compactenum}
-Pri hľadaní najmenšieho rozhrania, ktoré nepreteká, postupujeme vo virtuálnom strome od listu objektu $x$ smerom ku koreňu. Skúmané rozhrania tagov teda rastú geometricky, ich veľkosť odpovedá $2^i$, kde $i$ je vzdialenosť od listov vo virtuálnom strome. Zastavíme sa na prvom rozhraní, ktoré nepreteká.
+Pri hľadaní najmenšieho rozhrania, ktoré nepreteká, postupujeme vo virtuálnom strome od listu objektu $x$ smerom ku koreňu. Skúmané rozhrania tagov teda rastú geometricky, ich veľkosť odpovedá $2^i$, kde $i$ je vzdialenosť od listov vo virtuálnom strome (interval level). Zastavíme sa na prvom rozhraní, ktoré \textit{nepreteká}.
 Hovoríme, že rozhranie tagov \textit{preteká (overflow)}, ak je jeho \textit{hustota zaplnenia (density)} vyššia ako \textit{hranica pretečenia (overflow threshold)}. \textit{Hustota zaplenia} rozhrania tagov je podiel využitých tagov z tohoto rozhrania. Hustotu zaplnenia počítame prechádzaním objektov v tomto rozhraní. Hranicu pretečenia počítame nasledovne:
 \begin{compactenum}
     \item Pre rozhranie tagov s veľkosťou $2^0 = 1$ (listy vo virtuálnom strome) je hranica pretečenia $T_0 = 1$.
     \item Inak, pre rozhrania veľkosti $2^i$, $T_i = T_{i-1} / T = T^{-i}$, kde $T$ je hodnota medzi 1 a 2. Pri každom pretagovaní vypočítame novú najnižšiu možnú hodnotu $T$, pri ktorej koreň nepreteká.
 \end{compactenum}
 Vďaka invariantu $N/2 <= n <= 2N$ koreň virtuálneho stromu nikdy nepretečie, takže vždy môžeme v najhoršom prípade pretagovať celý zoznam.
-Po nájdení rozhrania, ktoré chceme pretagovať, priraďujeme objektom z tohoto rozhrania nové tagy, ktoré sú rovnomerne rozdistribuované v rámci daného rozhrania. Nový objekt $y$ môžeme pridať do zoznamu už pri priraďovaní nových tagov.
+Po nájdení rozhrania, ktoré chceme pretagovať, priraďujeme objektom z tohoto rozhrania nové tagy, ktoré sú rovnomerne rozdistribuované v rámci daného rozhrania.
+% Nový objekt $y$ môžeme pridať do zoznamu už pri priraďovaní nových tagov.
 
 \begin{algorithm}
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
