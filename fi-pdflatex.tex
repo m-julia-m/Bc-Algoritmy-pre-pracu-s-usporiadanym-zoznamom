@@ -145,21 +145,22 @@ Návrh implementácie vychádza z~existujúceho vizualizéru\footnote{Dostupné 
 
 V rámci ľubovoľnej množiny $M$ hovoríme, že prvok $x$ je \emph{priamy predchodca} prvku $y$, ak platí $x, y \in M, \nexists z \in M: (x < z < y)$, respektíve prvok $x$ je \emph{priamy nasledovník} prvku $y$, ak platí $x, y \in M, \nexists z \in M: (y < z < x)$.\\
 
-\textbf{Usporiadaný zoznam} (order data structure) definujeme ako dátovú štruktúru, ktorá uchováva neprázdnu \textit{lineárne usporiadanú množinu objektov} $M$ a môžeme na nej vykonávať operácie:
-\begin{enumerate}
-    \item \textit{Insert(x, y)}: vkladá do množiny $M$ nový objekt $y$ ako priameho nasledovníka existujúceho objektu $x$ z množiny $M$. Po vykonaní operácie platí:
-    \begin{compactitem}
-        \item $x < y$
-        \item $\forall z \in M: (z < x) \implies (z < y) $
-        \item $\forall z \in M: (x < z) \land (z \neq y) \implies (y < z)$
-    \end{compactitem}
+\textbf{Usporiadaný zoznam} (order data structure) definujeme ako dátovú štruktúru, ktorá uchováva neprázdnu \textit{lineárne usporiadanú množinu objektov} a môžeme na nej vykonávať operácie:
+\begin{compactenum}
+    \item \textit{Insert(x, y)}: vkladá do uchovávanej množiny nový objekt $y$ ako priameho nasledovníka existujúceho objektu $x$.
+    % Po vykonaní operácie platí:
+    % \begin{compactitem}
+    %     \item $x < y$
+    %     \item $\forall z \in M: (z < x) \implies (z < y) $
+    %     \item $\forall z \in M: (x < z) \land (z \neq y) \implies (y < z)$
+    % \end{compactitem}
 
-    \item \textit{Delete(x)}: odstraňuje z množiny $M$ existujúci objekt $x$.
-    \item \textit{Order(x, y)}: odpovedá, či $x$ je predchodca objektu $y$ pre existujúce objekty $x$ aj $y$ z množiny $M$.
-\end{enumerate}
+    \item \textit{Delete(x)}: odstraňuje z uchovávanej množiny existujúci objekt $x$.
+    \item \textit{Order(x, y)}: odpovedá, či $x$ je predchodca objektu $y$ pre existujúce objekty $x$ a $y$ z uchovávanej množiny.
+\end{compactenum}
 Predpokladáme, že:
 \begin{compactitem}
-    \item Štruktúra je inicializovaná operáciou \textit{Initialize(x)} a po inicializácii množina $M$ obsahuje objekt x.
+    \item Štruktúra je inicializovaná operáciou \textit{Initialize(x)} a po inicializácii uchováva množinu obsahujúcu objekt x.
     \item Štruktúra nikdy neostane s prázdnou množinou objektov.\\
 \end{compactitem}
 
