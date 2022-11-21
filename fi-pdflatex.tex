@@ -210,18 +210,23 @@ Operácia $Order(x, y)$ odpovedá, či $x < y$, teda či sa $x$ nachádza bliž�
 \Input{x (ukazateľ na objekt v zozname),\\
 y  (ukazateľ na nový objekt),\\
 linkedList (spájaný zoznam objektov)}
-\hline\vspace{0.2em}
-y.next \leftarrow x.next\;
+\hrule\vspace{0.2em}
+$y.next \leftarrow x.next$\;
+
 \If {y.next == null}
 {
-    linkedList.tail \leftarrow y\;
+    $linkedList.tail \leftarrow y$\;
 }
+
 \Else
 {
-    y.next.prev \leftarrow y\;
+    $y.next.prev \leftarrow y$\;
 }
-y.prev \leftarrow x\;
-x.next \leftarrow y\;
+
+$y.prev \leftarrow x$\;
+
+$x.next \leftarrow y$\;
+
 \caption{Insert na spájanom zozname}
 \end{algorithm}
 
@@ -229,22 +234,22 @@ x.next \leftarrow y\;
 \SetKwInOut{Input}{input}
 \Input{x (ukazateľ na objekt v zozname),\\
 linkedList (spájaný zoznam objektov)}
-\hline\vspace{0.2em}
+\hrule\vspace{0.2em}
 \If {x.prev == null}
 {
-    linkedList.head $\leftarrow$ x.next\;
+    $linkedList.head \leftarrow x.next$\;
 }
 \Else
 {
-    x.prev.next $\leftarrow$ x.next\;
+    $x.prev.next \leftarrow x.next$\;
 }
 \If {x.next == null}
 {
-    linkedList.tail \leftarrow x.prev\;
+    $linkedList.tail \leftarrow x.prev$\;
 }
 \Else
 {
-    x.next.prev $\leftarrow$ x.prev\;
+    $x.next.prev \leftarrow x.prev$\;
 }
 \caption{Delete na spájanom zozname}
 \end{algorithm}
@@ -255,7 +260,7 @@ linkedList (spájaný zoznam objektov)}
 y  (ukazateľ na objekt v zozname),\\
 linkedList (spájaný zoznam objektov)}
 \Output{pravdivostná hodnota (x > y)}
-\hline\vspace{0.2em}
+\hrule\vspace{0.2em}
 node $\leftarrow$ linkedList.head\;
 \While{node != null}
 {
@@ -267,7 +272,7 @@ node $\leftarrow$ linkedList.head\;
     {
         \Return {false}\;
     }
-    node $\leftarrow$ node.next\;
+    $node \leftarrow node.next$\;
 }
 \caption{Order na spájanom zozname}
 \end{algorithm}
@@ -284,8 +289,8 @@ Táto implementácia tiež vychádza z obojsmerne spájaného zoznamu, v ktorom 
   \item riešenie situácie, kedy pre nový objekt nemáme dostupný tag (rozdiel tagov jeho predchodcu a následníka je 1).
 \end{compactenum}
 
-\subsection*{Analógia s binárnym stromom}
-Keď zapisujeme tagy v binárnej sústave, môžeme si štruktúru predtaviť ako prefixový strom, ktorého listami sú objekty a cesta od koreňa k listu odpovedá tagu dosiahnutého objektu, viď obrázok nižšie.
+\subsection{Analógia s binárnym stromom}
+Keď zapisujeme tagy v binárnej sústave, môžeme si štruktúru predtaviť ako prefixový strom, ktorého listami sú objekty a cesta od koreňa k listu odpovedá tagu dosiahnutého objektu, viď obrázok nižšie:
 
 \includegraphics[width=\textwidth]{graphics/graphviz.png}
 
@@ -293,7 +298,7 @@ Pri implementácii nám stačí uchovávať spájaný zoznam objektov, predstava
 
 Každý vnútorný uzol tohoto stromu identifikuje \textit{rozhranie tagov}, ktorým je prefixom. Toto rozhranie tagov odpovedá podzoznamu (sublist) objektov, ktoré sú listami dosiahnuteľnými z tohoto uzlu. Každý objekt patrí do $\log{u}$ takýchto rozhraní tagov.
 
-\subsection*{Rekonštrukcia zoznamu (rebuild)}
+\subsection{Rekonštrukcia zoznamu (rebuild)}
 
 Aktuálny počet objektov v zozname označujeme n. Počet objektov pri poslednej \textit{rekonštrukcii (rebuild)} zoznamu označujeme N. Rekonštrukciu zoznamu realizujeme, keď je porušený \textit{invariant 1:} $N/2 <= n <= 2N$.
 
@@ -318,6 +323,30 @@ Tabuľka nižšie ukazuje, ako sa menia hodnoty $n, N,$ a $u$ pri vykonaní oper
   \end{tabularx}
 \end{table}
 
+\begin{algorithm}
+\SetKwInOut{Input}{input}
+\Input{linkedList (spájaný zoznam objektov),\\
+n (počet objektov v zozname),\\
+N (počet objektov pri poslednej rekonštrukcii zoznamu),\\
+u (horná hranicca tagov)}
+\hrule\vspace{0.2em}
+$N \leftarrow n$\;
+
+$u \leftarrow N^2$\;
+
+$tagOffset \leftarrow u / n$; \tcp*[h]{floored division}
+
+$tag \leftarrow 0$\;
+
+\ForEach {node in linkedList}
+{
+    $node.tag \leftarrow tag$\;
+    
+    $tag \leftarrow tag + tagOffset$\;
+}
+
+\caption{Rebuild/rekonštrukcia spájaného zoznamu s tagmi}
+\end{algorithm}
 
 \section{Insert(x, y)}
 
@@ -326,13 +355,71 @@ Pokiaľ nie je dostupný žiadny tag z daného rozpätia (rozdiel medzi tagmi $x
 
 Ak je po vložení nového objektu porušený invariant $N/2 <= n <= 2N$, realizujeme rekonštrukciu zoznamu.
 
-\subsection{Stratégia voľby tagov}
+\begin{algorithm}
+\SetKwInOut{Input}{input}
+\Input{x (ukazateľ na objekt v zozname),\\
+y  (ukazateľ na nový objekt),\\
+linkedList (spájaný zoznam objektov s tagmi),\\
+n (počet objektov v zozname),\\
+N (počet objektov pri poslednej rekonštrukcii zoznamu),\\
+u (horná hranicca tagov)}
+\hrule\vspace{0.2em}
+$z \leftarrow x.next$\;
+
+\If{(z == null and x.tag == u) or (x.tag + 1 == z.tag)}
+{
+    $Relabel(x)$\;
+}
+
+$y.tag \leftarrow ChooseNewTagAfter(x)$\;
+
+$y.next \leftarrow x.next$\;
+\If {y.next == null}
+{
+    $linkedList.tail \leftarrow y$\;
+}
+\Else
+{
+    $y.next.prev \leftarrow y$\;
+}
+$y.prev \leftarrow x$\;
+$x.next \leftarrow y$\;
+
+
+$n \leftarrow n + 1$\;
+
+\If{!( N/2 <= n <= 2N)}
+{
+    $Rebuild()$\;
+}
+\caption{Insert na spájanom zozname s tagmi}
+\end{algorithm}
+
+\subsection*{Stratégia voľby tagov}
 
 \textit{Two Simplified Algorithms for Maintaining Order in a List} \cite{paper1_ordered_list} experimentálne porovnáva 2 stratégie výberu nového tagu:
 1. Po sebe idúce tagy (consecutive inserts): tag nového objektu je o 1 vyšší než tag jeho predchodcu.
 2. Priemerované tagy (average inserts): tag nového objektu je priemer jeho susedov.
 Pri stratégii po sebe idúcich tagov musíme pretagovať menší interval každý druhý insert. Pri stratégii priemerovaných tagov musíme pretagovať väčšie intervaly, no menej často.
-Používanie priemerovaných tagov sa ukázalo o konštantu rýchlejšie než po sebe idúce tagy. Časová náročnosť tohoto riešenia však nie je závislá na stratégii voľby tagov. 
+Používanie priemerovaných tagov sa ukázalo o konštantu rýchlejšie než po sebe idúce tagy. Časová náročnosť tohoto riešenia však nie je závislá na stratégii voľby tagov.
+
+\begin{algorithm}
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\Input{x (ukazateľ na objekt v zozname, za ktorým cheme vybrať tag)}
+\Output{tag pre nový objekt vkladaný za x}
+\hrule\vspace{0.2em}
+$minTag \leftarrow x.tag + 1$\;
+
+$maxTag \leftarrow u$\;
+
+\If {x.next != null}
+{
+    $maxTag \leftarrow x.next.tag - 1$\;
+}
+
+\Return {(minTag + maxTag) / 2}; \tcp{floored division}
+\caption{Voľba tagu pre nový objekt (ChooseNewTag) }
+\end{algorithm}
 
 \subsection{Pretagovanie (relabeling)}
 Pretagovanie pri vkladaní objektu $y$ za $x$ pozostáva z 2 častí:
@@ -344,105 +431,54 @@ Pri hľadaní najmenšieho rozhrania, ktoré nepreteká, postupujeme vo virtuál
 Hovoríme, že rozhranie tagov \textit{preteká (overflow)}, ak je jeho \textit{hustota zaplnenia (density)} vyššia ako \textit{hranica pretečenia (overflow threshold)}. \textit{Hustota zaplenia} rozhrania tagov je podiel využitých tagov z tohoto rozhrania. Hustotu zaplnenia počítame prechádzaním objektov v tomto rozhraní. Hranicu pretečenia počítame nasledovne:
 \begin{compactenum}
     \item Pre rozhranie tagov s veľkosťou $2^0 = 1$ (listy vo virtuálnom strome) je hranica pretečenia $T_0 = 1$.
-    \item Inak, pre rozhrania veľkosti $2^i$, $T_i = T_{i-1} / T = T^{-i}$.
+    \item Inak, pre rozhrania veľkosti $2^i$, $T_i = T_{i-1} / T = T^{-i}$, kde $T$ je hodnota medzi 1 a 2. Pri každom pretagovaní vypočítame novú najnižšiu možnú hodnotu $T$, pri ktorej koreň nepreteká.
 \end{compactenum}
 Vďaka invariantu $N/2 <= n <= 2N$ koreň virtuálneho stromu nikdy nepretečie, takže vždy môžeme v najhoršom prípade pretagovať celý zoznam.
 Po nájdení rozhrania, ktoré chceme pretagovať, priraďujeme objektom z tohoto rozhrania nové tagy, ktoré sú rovnomerne rozdistribuované v rámci daného rozhrania. Nový objekt $y$ môžeme pridať do zoznamu už pri priraďovaní nových tagov.
+
+\begin{algorithm}
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\Input{x (ukazateľ na objekt v zozname, nad ktorým cheme pretagovať),\\}
+\hrule\vspace{0.2em}
+\tcp{Find smallest tag interval not in overflow.}
+$T \leftarrow CalculateT()$\;
+$interval \leftarrow [x.tag, x.tag]$\;
+$interval \leftarrow IncreaseInterval(interval)$\;
+\tcp{Now interval.level is 1 and interval.size = $2^1$.}
+\tcp{interval.fill is calculated in IncreaseInterval by traversing and counting objects in the tag range.}
+\tcp{interval.density is calculated as $interval.fill / interval.size$.}
+
+$intervalOverflowThreshold \leftarrow T\textasciicircum(- interval.level)$
+
+\While{interval.density > intervalOverflowThreshold}
+{
+    \tcp{Increase interval size.}
+    
+    $interval \leftarrow IncreaseInterval(interval)$\;
+    $intervalOverflowThreshold \leftarrow T\textasciicircum(- interval.level)$\;
+}
+
+\tcp{Assign new tags.}
+
+$tagOffset \leftarrow interval.size / interval.fill$; \tcp*[h]{floored division}
+
+$tag \leftarrow interval.min$\;
+
+$sublist \leftarrow SublistForTagInterval(interval)$\;
+
+\ForEach {node in sublist}
+{
+    $node.tag \leftarrow tag$\;
+    
+    $tag \leftarrow tag + tagOffset$\;
+}
+\caption{Relabel/pretagovanie na spájanom zozname s tagmi}
+\end{algorithm}
 
 \section{Delete(x)}
 Pri odstraňovaní objektu stačí nastaviť nové vzťahy priameho prechodcu/následníka pre uzly susediace s $x$.
 
 Ak je po odstránení porušený invariant $N/2 <= n <= 2N$, realizujeme rekonštrukciu zoznamu.
-
-\section{Order(x, y)}
-K rozhodnutiu, či $x$ je predchodcom $y$, nám pomáhajú pridané tagy. Platí $x.tag < y.tag \iff x < y$, teda len porovnávame tagy $x$ a $y$.
-
-
-
-\begin{algorithm}
-\SetKwInOut{Input}{input}
-\Input{linkedList (spájaný zoznam objektov),\\
-n (počet objektov v zozname),\\
-N (počet objektov pri poslednej rekonštrukcii zoznamu),\\
-u (horná hranicca tagov)}
-\hline\vspace{0.2em}
-N \leftarrow n\;
-
-u \leftarrow N^2\;
-
-tagOffset \leftarrow u / n\; \tcc*[h]{floored division}
-
-tag \leftarrow 0\;
-
-\ForEach {node in linkedList}
-{
-    node.tag \leftarrow tag\;
-    
-    tag \leftarrow tag + tagOffset\;
-}
-
-\caption{Rebuild/rekonštrukcia spájaného zoznamu s tagmi}
-\end{algorithm}
-
-\begin{algorithm}
-\SetKwInOut{Input}{input}
-\Input{x (ukazateľ na objekt v zozname),\\
-y  (ukazateľ na nový objekt),\\
-linkedList (spájaný zoznam objektov s tagmi),\\
-n (počet objektov v zozname),\\
-N (počet objektov pri poslednej rekonštrukcii zoznamu),\\
-u (horná hranicca tagov)}
-\hline\vspace{0.2em}
-z \leftarrow x.next\;
-
-\If{(z == null and x.tag == u) or (x.tag + 1 == z.tag)}
-{
-    Relabel(x)\;
-}
-
-y.tag \leftarrow ChooseNewTagAfter(x)\;
-
-y.next \leftarrow x.next\;
-\If {y.next == null}
-{
-    linkedList.tail \leftarrow y\;
-}
-\Else
-{
-    y.next.prev \leftarrow y\;
-}
-y.prev \leftarrow x\;
-x.next \leftarrow y\;
-
-
-n \leftarrow n + 1\;
-
-\If{!( N/2 <= n <= 2N)}
-{
-    Rebuild()\;
-}
-\caption{Insert na spájanom zozname s tagmi}
-\end{algorithm}
-
-
-\begin{algorithm}
-\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-\Input{x (ukazateľ na objekt v zozname, za ktorým cheme vybrať tag)}
-\Output{tag pre nový objekt vkladaný za x}
-\hline\vspace{0.2em}
-minTag \leftarrow x.tag + 1\;
-
-maxTag \leftarrow u\;
-
-\If {x.next != null}
-{
-    maxTag \leftarrow x.next.tag - 1\;
-}
-
-\Return {(minTag + maxTag) / 2}; \tcc{floored division}
-\caption{ChooseNewTag na spájanom zozname s tagmi}
-\end{algorithm}
-
 
 \begin{algorithm}
 \SetKwInOut{Input}{input}
@@ -450,43 +486,48 @@ maxTag \leftarrow u\;
 linkedList (spájaný zoznam objektov),\\
 n (počet objektov v zozname),\\
 N (počet objektov pri poslednej rekonštrukcii zoznamu)}
-\hline\vspace{0.2em}
+\hrule\vspace{0.2em}
 \If {x.prev == null}
 {
-    linkedList.head $\leftarrow$ x.next\;
+    $linkedList.head \leftarrow x.next$\;
 }
 \Else
 {
-    x.prev.next $\leftarrow$ x.next\;
+    $x.prev.next \leftarrow x.next$\;
 }
 \If {x.next == null}
 {
-    linkedList.tail \leftarrow x.prev\;
+    $linkedList.tail \leftarrow x.prev$\;
 }
 \Else
 {
-    x.next.prev $\leftarrow$ x.prev\;
+    $x.next.prev \leftarrow x.prev$\;
 }
 
-n \leftarrow n - 1\;
+$n \leftarrow n - 1$\;
 
 \If{!( N/2 <= n <= 2N)}
 {
-    Rebuild()\;
+    $Rebuild()$\;
 }
 \caption{Delete na spájanom zozname s tagmi}
 \end{algorithm}
+
+\section{Order(x, y)}
+Platí $x.tag < y.tag \iff x < y$. 
+K rozhodnutiu, či $x$ je predchodcom $y$, nám preto stačí porovnať  $x.tag$ a $y.tag$.
 
 \begin{algorithm}
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
 \Input{x (ukazateľ na objekt v zozname),\\
 y  (ukazateľ na objekt v zozname)}
 \Output{pravdivostná hodnota (x > y)}
-\hline\vspace{0.2em}
+\hrule\vspace{0.2em}
 \Return {x.tag < y.tag}\;
 \caption{Order na spájanom zozname s tagmi}
 \end{algorithm}
 
+\clearpage
 
 \chapter{These are}
 \section{the available}
