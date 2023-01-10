@@ -209,21 +209,23 @@ Máme usporiadaný zoznam s množinou objektov $A < B < C$ a vykonávame na ňom
 
 \chapter{Spájaný zoznam}
 
-Jednou z možností implementácie usporiadaného zoznamu je ukladať objekty v obojsmerne spájanom zozname (doubly linked list). Každý uzol spájaného zoznamu reprezentuje jeden objekt a má odkaz na svojho priameho nasledovníka a priameho predchodcu. Poradie v akom sú objekty uložené v spájanom zozname odpovedá ich usporiadaniu od najmenšieho po najväčší.
+Jednou z možností implementácie usporiadaného zoznamu je ukladať objekty v obojsmerne spájanom zozname (doubly linked list). Každý uzol spájaného zoznamu je jeden objekt a má odkaz na svojho priameho nasledovníka a priameho predchodcu. Poradie v akom sú objekty uložené v spájanom zozname odpovedá ich usporiadaniu od najmenšieho po najväčší.
 
-Operácia $Insert(x, y)$ vkladá nový objekt $y$ do zoznamu ako nasledovníka $x$. Stačí nastaviť nové vzťahy priamych nasledovníkov a predchodcov pre uzol $y$ a uzly s ním susediace. Operácia má preto časovú zložitosť $O(1)$.
+V rámci tejto práce viackrát využívame obojsmerný spájaný zoznam. Okrem predpokladaných atribútov $head$ a $tail$ ho rozšírime o metódu $InsertNodeAfter(x, y)$, ktorá vkladá nový uzol $y$ za uzol $x$. Pod aliasom $RemoveNode(x)$ rozumieme štandardnú metódu spájaného zoznamu $Delete(x)$, ktorá odstráni uzol $x$ zo spájaného zoznamu (alias $RemoveNode(x)$ používame pre odlíšenie od operácie $Delete(x)$ na usporiadanom zozname).
 
-Operácia $Delete(x)$ odstraňuje $x$ zo zoznamu. Opäť stačí nastaviť nové vzťahy priamych prechodcov a následníkov pre uzly susediace s $x$. Operácia má preto časovú zložitosť $O(1)$.
+Operácia $Insert(x, y)$ vkladá nový objekt $y$ do zoznamu ako nasledovníka $x$. Odpovedá spomínanej metóde spájaného zoznamu $InsertNodeAfter(x, y)$. Stačí nastaviť nové vzťahy priamych nasledovníkov a predchodcov pre uzol $y$ a uzly s ním susediace. Operácia má preto časovú zložitosť $O(1)$.
 
-Operácia $Order(x, y)$ odpovedá, či $x < y$, teda či sa $x$ nachádza bližšie k začiatku spájaného zoznamu než $y$. Postupne prechádza zoznam, kým nenájde uzol $x$ alebo $y$. Ak ako prvý nájde uzol $x$, platí $x < y$. V opačnom prípade $x > y$.
+Operácia $Delete(x)$ odstraňuje $x$ zo zoznamu. Odpovedá metóde spájaného zoznamu $RemoveNode(x)$.  Opäť stačí nastaviť nové vzťahy priamych prechodcov a následníkov pre uzly susediace s $x$. Operácia má preto časovú zložitosť $O(1)$.
+
+Operácia $Order(x, y)$ odpovedá, či $x < y$, teda či sa $x$ nachádza bližšie k začiatku spájaného zoznamu než $y$. Postupne prechádza zoznam, kým nenájde uzol $x$ alebo $y$. Ak ako prvý nájde uzol $x$, platí $x < y$. V opačnom prípade $x > y$. Operácia po jednom prechádza zoznam o $n$ objektoch, preto má časovú zložitosť $O(n)$.
 
 \SetAlgorithmName{Algoritmus}{Zoznam algoritmov} 
 
 \begin{algorithm}
 \SetKwInOut{Input}{input}
-\Input{x (ukazateľ na objekt v zozname),\\
-y  (ukazateľ na nový objekt),\\
-linkedList (spájaný zoznam objektov)}
+\Input{x (ukazateľ na uzol v zozname),\\
+y  (ukazateľ na nový uzol),\\
+linkedList (spájaný zoznam)}
 \hrule\vspace{0.2em}
 $y.next \leftarrow x.next$\;
 
@@ -241,13 +243,38 @@ $y.prev \leftarrow x$\;
 
 $x.next \leftarrow y$\;
 
-\caption{Insert na spájanom zozname}
+\caption{InsertNodeAfter metóda spájaného zoznamu}
 \end{algorithm}
+
+% \begin{algorithm}
+% \SetKwInOut{Input}{input}
+% \Input{x (ukazateľ na objekt v zozname),\\
+% y  (ukazateľ na nový objekt),\\
+% linkedList (spájaný zoznam objektov)}
+% \hrule\vspace{0.2em}
+% $y.next \leftarrow x.next$\;
+
+% \If {y.next == null}
+% {
+%     $linkedList.tail \leftarrow y$\;
+% }
+
+% \Else
+% {
+%     $y.next.prev \leftarrow y$\;
+% }
+
+% $y.prev \leftarrow x$\;
+
+% $x.next \leftarrow y$\;
+
+% \caption{Insert na spájanom zozname}
+% \end{algorithm}
 
 \begin{algorithm}
 \SetKwInOut{Input}{input}
-\Input{x (ukazateľ na objekt v zozname),\\
-linkedList (spájaný zoznam objektov)}
+\Input{x (ukazateľ na u v zozname),\\
+linkedList (spájaný zoznam)}
 \hrule\vspace{0.2em}
 \If {x.prev == null}
 {
@@ -265,8 +292,32 @@ linkedList (spájaný zoznam objektov)}
 {
     $x.next.prev \leftarrow x.prev$\;
 }
-\caption{Delete na spájanom zozname}
+\caption{RemoveNode metóda spájaného zoznamu}
 \end{algorithm}
+
+% \begin{algorithm}
+% \SetKwInOut{Input}{input}
+% \Input{x (ukazateľ na objekt v zozname),\\
+% linkedList (spájaný zoznam objektov)}
+% \hrule\vspace{0.2em}
+% \If {x.prev == null}
+% {
+%     $linkedList.head \leftarrow x.next$\;
+% }
+% \Else
+% {
+%     $x.prev.next \leftarrow x.next$\;
+% }
+% \If {x.next == null}
+% {
+%     $linkedList.tail \leftarrow x.prev$\;
+% }
+% \Else
+% {
+%     $x.next.prev \leftarrow x.prev$\;
+% }
+% \caption{Delete na spájanom zozname}
+% \end{algorithm}
 
 \begin{algorithm}
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
@@ -296,7 +347,7 @@ node $\leftarrow$ linkedList.head\;
 
 V tejto kapitole sa budeme venovať riešeniu z článku \textit{Two Simplified Algorithms for Maintaining Order in a List} \cite{paper1_ordered_list}.
 
-Táto implementácia tiež vychádza z obojsmerne spájaného zoznamu, v ktorom poradie objektov v zozname zodpovedá ich usporiadaniu. Každý objektu v zozname má navyše priradený \textit{tag}. Tagy sú celé čísla a platí $x < y \iff x.tag < y.tag$, teda každý objekt má vyšší tag než jeho predchodca. Tagy v rámci zoznamu preto rastú smerom k poslednému objektu. Hodnoty tagov sú obmedzené na interval $[0, u]$. Tagy nám zjednodušujú operáciu Order (stačí porovnať tagy prvkov), no prinášajú nové otázky:
+Táto implementácia tiež vychádza z obojsmerne spájaného zoznamu, v ktorom poradie objektov v zozname zodpovedá ich usporiadaniu. Každý objekt v zozname má navyše priradený \textit{tag}. Tagy sú celé čísla a platí $x < y \iff x.tag < y.tag$, teda každý objekt má vyšší tag než jeho predchodca. Tagy v rámci zoznamu preto rastú smerom k poslednému objektu. Hodnoty tagov sú obmedzené na interval $[0, u]$. Tagy nám zjednodušujú operáciu Order (stačí porovnať tagy prvkov), no prinášajú nové otázky:
 \begin{compactenum}
   \item voľba hornej hranice intervalu tagov $u$
   \item stratégia priraďovania tagov pre nové objekty
@@ -342,7 +393,7 @@ Tabuľka nižšie ukazuje, ako sa menia hodnoty $n, N,$ a $u$ pri vykonaní oper
 \Input{linkedList (spájaný zoznam objektov),\\
 n (počet objektov v zozname),\\
 N (počet objektov pri poslednej rekonštrukcii zoznamu),\\
-u (horná hranicca tagov)}
+u (horná hranica tagov)}
 \hrule\vspace{0.2em}
 $N \leftarrow n$\;
 
@@ -376,7 +427,7 @@ y  (ukazateľ na nový objekt),\\
 linkedList (spájaný zoznam objektov s tagmi),\\
 n (počet objektov v zozname),\\
 N (počet objektov pri poslednej rekonštrukcii zoznamu),\\
-u (horná hranicca tagov)}
+u (horná hranica tagov)}
 \hrule\vspace{0.2em}
 $z \leftarrow x.next$\;
 
@@ -387,17 +438,19 @@ $z \leftarrow x.next$\;
 
 $y.tag \leftarrow ChooseNewTagAfter(x)$\;
 
-$y.next \leftarrow x.next$\;
-\If {y.next == null}
-{
-    $linkedList.tail \leftarrow y$\;
-}
-\Else
-{
-    $y.next.prev \leftarrow y$\;
-}
-$y.prev \leftarrow x$\;
-$x.next \leftarrow y$\;
+% $y.next \leftarrow x.next$\;
+% \If {y.next == null}
+% {
+%     $linkedList.tail \leftarrow y$\;
+% }
+% \Else
+% {
+%     $y.next.prev \leftarrow y$\;
+% }
+% $y.prev \leftarrow x$\;
+% $x.next \leftarrow y$\;
+
+$linkedList.InsertNodeAfter(x, y)$\;
 
 
 $n \leftarrow n + 1$\;
@@ -417,7 +470,7 @@ $n \leftarrow n + 1$\;
   \item Priemerované tagy (average inserts): tag nového objektu je priemer jeho susedov.
 \end{compactenum}
 Pri stratégii po sebe idúcich tagov musíme pretagovať menší interval každý druhý insert. Pri stratégii priemerovaných tagov musíme pretagovať väčšie intervaly, no menej často. Používanie priemerovaných tagov sa ukázalo o konštantu rýchlejšie než po sebe idúce tagy.
-% Časová náročnosť tohoto riešenia však nie je závislá na stratégii voľby tagov.
+% Dôkaz časovej náročnosti algoritmu pre insert však nie je závislý na stratégii voľby tagov.
 
 \begin{algorithm}
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
@@ -459,11 +512,12 @@ Po nájdení rozhrania, ktoré chceme pretagovať, priraďujeme objektom z tohot
 \hrule\vspace{0.2em}
 \tcp{Find smallest tag interval not in overflow.}
 $T \leftarrow CalculateT()$\;
-$interval \leftarrow [x.tag, x.tag]$\;
+$interval \leftarrow new Interval(x, x)$; \tcp*[h]{Interval containing only x, i.e. [x.tag, x.tag]}
+
 $interval \leftarrow IncreaseInterval(interval)$\;
 \tcp{Now interval.level is 1 and interval.size = $2^1$.}
 \tcp{interval.fill is calculated in IncreaseInterval by traversing and counting objects in the tag range.}
-\tcp{interval.density is calculated as $interval.fill / interval.size$.}
+\tcp{interval.density is calculated as interval.fill / interval.size.}
 
 $intervalOverflowThreshold \leftarrow T\textasciicircum(- interval.level)$
 
@@ -475,25 +529,53 @@ $intervalOverflowThreshold \leftarrow T\textasciicircum(- interval.level)$
     $intervalOverflowThreshold \leftarrow T\textasciicircum(- interval.level)$\;
 }
 
-\tcp{Assign new tags.}
+$AssignNewTags(interval.startNode, interval.fill,$\\
+    \hspace{90pt}$interval.minTag, interval.maxTag)$\;
+% \tcp{Assign new tags.}
 
-$tagOffset \leftarrow interval.size / interval.fill$; \tcp*[h]{floored division}
+% $tagOffset \leftarrow interval.size / interval.fill$; \tcp*[h]{floored division}
 
-$tag \leftarrow interval.min$\;
+% $tag \leftarrow interval.min$\;
 
-$sublist \leftarrow SublistForTagInterval(interval)$\;
+% $sublist \leftarrow SublistForTagInterval(interval)$\;
 
-\ForEach {node in sublist}
-{
-    $node.tag \leftarrow tag$\;
+% \ForEach {node in sublist}
+% {
+%     $node.tag \leftarrow tag$\;
     
-    $tag \leftarrow tag + tagOffset$\;
-}
+%     $tag \leftarrow tag + tagOffset$\;
+% }
 \caption{Relabel/pretagovanie na spájanom zozname s tagmi}
 \end{algorithm}
 
+
+\begin{algorithm}
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\Input{startNode (prvý uzol na pretagovanie),\\
+$count$ (počet objektov na pretagovanie),\\
+$minTag$ (začiatok intervalu priraďovaných tagov),\\
+$maxTag$ (koniec intervalu priraďovaných tagov)}
+\hrule\vspace{0.2em}
+
+$tagOffset \leftarrow (maxTag - minTag) / n$; \tcp*[h]{floored division}
+
+$tag \leftarrow minTag$\;
+
+$nodee \leftarrow startNode$
+
+\While {$count > 0$}
+{
+    $node.tag \leftarrow tag$\;
+    $node \leftarrow node.next$\;
+    $count \leftarrow count - 1$\;
+    $tag \leftarrow tag + tagOffset$\;
+}
+\caption{AssignNewTags}
+\end{algorithm}
+
+
 \section{Delete(x)}
-Pri odstraňovaní objektu stačí nastaviť nové vzťahy priameho prechodcu/následníka pre uzly susediace s $x$.
+Pri odstraňovaní objektu stačí nastaviť nové vzťahy priameho predchodcu/následníka pre uzly susediace s $x$, prípadne aktualizovať head a tail spájaného zoznamu.
 
 Ak je po odstránení porušený invariant $N/2 <= n <= 2N$, realizujeme rekonštrukciu zoznamu.
 
@@ -504,22 +586,24 @@ linkedList (spájaný zoznam objektov),\\
 n (počet objektov v zozname),\\
 N (počet objektov pri poslednej rekonštrukcii zoznamu)}
 \hrule\vspace{0.2em}
-\If {x.prev == null}
-{
-    $linkedList.head \leftarrow x.next$\;
-}
-\Else
-{
-    $x.prev.next \leftarrow x.next$\;
-}
-\If {x.next == null}
-{
-    $linkedList.tail \leftarrow x.prev$\;
-}
-\Else
-{
-    $x.next.prev \leftarrow x.prev$\;
-}
+% \If {x.prev == null}
+% {
+%     $linkedList.head \leftarrow x.next$\;
+% }
+% \Else
+% {
+%     $x.prev.next \leftarrow x.next$\;
+% }
+% \If {x.next == null}
+% {
+%     $linkedList.tail \leftarrow x.prev$\;
+% }
+% \Else
+% {
+%     $x.next.prev \leftarrow x.prev$\;
+% }
+
+$linkedList.RemoveNode(x)$
 
 $n \leftarrow n - 1$\;
 
@@ -538,11 +622,280 @@ K rozhodnutiu, či $x$ je predchodcom $y$, nám preto stačí porovnať  $x.tag$
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
 \Input{x (ukazateľ na objekt v zozname),\\
 y  (ukazateľ na objekt v zozname)}
-\Output{pravdivostná hodnota (x > y)}
+\Output{pravdivostná hodnota (x < y)}
 \hrule\vspace{0.2em}
 \Return {x.tag < y.tag}\;
 \caption{Order na spájanom zozname s tagmi}
 \end{algorithm}
+
+\chapter{Dvojposchodový spájaný zoznam s tagmi}
+Článok \textit{Two Simplified Algorithms for Maintaining Order in a List} \cite{paper1_ordered_list} ďalej uvádza spôsob, akým vieme pretagovanie a rekonštrukciu spájaného zoznamu s tagmi zefektívniť. Dátovú štruktúru rozdelíme na viacero poschodí, čím získame amortizovanú časovú zložitosť $\O(1)$ pre Insert a Delete a zachováme $\O(1)$ v najhoršom prípade pre Order.
+
+Spájaný zoznam s $N$ objektami rozsekáme na $N/log(N)$ menších podzoznamov o $log(N)$ objektoch, ktoré tvoria nižšie poschodie. Vyššie poschodie tvorí spájaný zoznam reprezentantov týchto podzoznamov. Každý reprezentant má odkaz na podzoznam, ktorý reprezentuje. Každý vložený objekt má odkaz na reprezentanta podzoznamu, v ktorom sa nachádza. Reprezentanti podzoznamov majú tiež tagy a ich poradie odpovedá originálnemu poradiu podzoznamov. Pre reprezentantov podzoznamov $a$ a $b$ platí $a.tag < b.tag$ práve vtedy, ak objekty v podzozname $a$ predchádzajú objekty podzoznamu $b$ (hovoríme, že podzoznam $a$ predchádza podzoznam $b$). Tagy reprezentantov preto rastú smerom k poslednému podzoznamu. Tagy v rámci jedného podzoznamu sú nezávislé od tagov ostatných podzoznamov aj zoznamu reprezentantov. V rámci každého podzoznamu fungujú tagy ako doteraz, teda $x < y \iff x.tag < y.tag$. 
+
+\subsection{Rekonštrukcia dvojposchodového zoznamu}
+
+Aktuálny počet objektov v usporiadanom zozname označujeme $n$. Počet objektov pri poslednej rekonštrukcii označujeme $N$. Rekonštrukciu zoznamu realizujeme, keď je porušený \textit{invariant 1:} $N/2 <= n <= 2N$.
+Pri rekonštrukcii priraďujeme $N = n$ a objekty usporiadaného zoznamu nanovo rozsekáme do $N/log(N)$ podzoznamov o $log(N)$ objektoch. Pre podzoznamy určujeme novú hornú hranicu intervalu tagov $u_s = N_s^c$, kde $N_s$ odpovedá dĺžke podzoznamu $N_s = log(N)$ a $c = 2$ (zvolené pre potreby tejto práce v predošlej kapitole). Zoznam reprezentantov má inú dĺžku než podzoznamy, má vlastné $u_r = N_r^c$, kde $N_r$ odpovedá dĺžke zoznamu reprezentantov $N_r = N/log(N)$. Následne priradíme nové tagy objektom v jednotlivých podzoznamoch aj reprezentantom podzoznamov.
+
+\begin{algorithm}
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\Input{representatives (spájaný zoznam reprezentantov podzoznamov),\\
+n (počet objektov v zozname),\\
+N (počet objektov pri poslednej rekonštrukcii zoznamu)
+% $u_s$ (horná hranica tagov pre podzoznamy),\\
+% $u_r$ (horná hranica tagov pre reprezentantov podzoznamov)
+}
+\hrule\vspace{0.2em}
+$N \leftarrow n$\;
+
+$N_s \leftarrow log(N)$; \tcp*[h]{new count of elements in sublists}
+
+$N_r \leftarrow N/log(N)$; \tcp*[h]{new count of sublist representatives}
+
+$u_s \leftarrow N_s^2$\;
+
+$u_r \leftarrow N_r^2$\;
+
+$newRepresentatives \leftarrow new~LinkedList()$\;
+
+\For{$i\leftarrow 0$ \KwTo $N_r$}
+{
+    $sublist \leftarrow TakeFromSublists(N_s, representatives)$\;
+    
+    \tcp{Take $N_s$ objects from the start of the sorted list -- remove them from original sublist and return them as a linked list.}
+
+    $AssignNewTags(sublist.head, N_s, 0, u_s)$\;
+    
+    $representative \leftarrow new~SublistRepresentative(sublist)$\;
+
+    \ForEach{$node~in~sublist$}
+    {
+        $node.rep \leftarrow representative$\;
+    }
+    
+    $newRepresentatives.Append(representative)$\;
+}
+
+$AssignNewTags(newRepresentatives.head, N_r, 0, u_r)$\;
+
+$representatives \leftarrow newRepresentatives$\;
+
+\caption{Rebuild/rekonštrukcia dvojposchodového spájaného zoznamu s tagmi}
+\end{algorithm}
+
+
+\section{Insert(x,y)}
+
+Zavádzame \textit{invariant 2:} pre každý podzoznam $s$ v usporiadanom zozname platí: $0 < n_s <= 2N_s $, kde $n_s$ je aktuálny počet objektov v danom podzozname. Ak pred vložením prvku do podzoznamu platí $ n_s = 2N_s = 2log(N)$ (hranica by bola presiahnutá) vykonávame najprv nasledovné operácie:
+\begin{compactenum}
+    \item{Podzoznam rozsekneme na 2 polovice o $N_s = log(N)$ objektoch.}
+    \item{Vytvoríme reprezentanta pre nový podzoznam vzniknutý z druhej polovice objektov (druhou polovicou rozumieme polovicu, ktorej objekty sú v usporiadaní následníkmi prvej polovice). Vložíme ho do zoznamu reprezentantov ako priameho následníka reprezentanta pôvodneho podzoznamu (prvej polovice). To zahŕňa priraďenie tagu novému reprezentantovi tak, aby splňal $r_1.tag < r_2.tag < r_3.tag$ (respektíve $r_1.tag < r_2.tag <= u_r$, ak $r_1$ nemá pred vložením následníka), kde $r_1$ je reprezentant prvej polovice,  $r_2$ je reprezentant druhej polovice, $r_3$ je priamy následník $r_1$ (pred vložením $r_2$). Ak takýto tag nie je dostupný, pretagujeme zoznam reprezentantov.
+    \item{Na všetkých objektoch nového podzoznamu (t.j. druhá polovica) aktualizujeme odkaz na reprezentanta podzoznamu.}
+    \item{Vložíme nový objekt $y$ za objekt $x$.}
+    
+\end{compactenum}
+
+Objekt $y$ vkladáme do podzoznamu obsahujúceho objekt $x$ ako priameho následníka objektu $x$ a priraďujeme mu tag spĺňajúci $x.tag < y.tag < z.tag$ (respektíve $x.tag < y.tag <= u$, ak $x$ nemá následníka), kde . Ak takýto tag nie je dostupný, pretagujeme časť podzoznamu, maximálne však celý tento podzoznam.
+
+Ak je po vložení nového objektu porušený invariant $N/2 <= n <= 2N$, realizujeme rekonštrukciu zoznamu.
+
+\begin{algorithm}
+\SetKwInOut{Input}{input}
+\Input{x (ukazateľ na objekt v zozname),\\
+y  (ukazateľ na nový objekt),\\
+representatives (spájaný zoznam reprezentantov podzoznamov),\\
+n (počet objektov v zozname),\\
+N (počet objektov pri poslednej rekonštrukcii zoznamu),\\
+u (horná hranica tagov)}
+\hrule\vspace{0.2em}
+$N_s \leftarrow log(N)$\;
+$sublist \leftarrow x.rep.sublist$\;
+\If{$sublist.n_s == 2N_s$}
+{
+    $SplitInHalf(sublist)$\;
+    $sublist \leftarrow x.rep.sublist$; \tcp*[h]{Might be in new sublist.}
+    
+}
+
+$z \leftarrow x.next$\;
+
+\If{($z == null~and~x.tag == u$) or ($x.tag + 1 == z.tag$)}
+{
+    $Relabel(x)$\;
+}
+
+$y.tag \leftarrow ChooseNewTagAfter(x)$\;
+
+% $y.next \leftarrow x.next$\;
+% \If {y.next == null}
+% {
+%     $linkedList.tail \leftarrow y$\;
+% }
+% \Else
+% {
+%     $y.next.prev \leftarrow y$\;
+% }
+% $y.prev \leftarrow x$\;
+% $x.next \leftarrow y$\;
+$sublist.InsertNodeAfter(x, y)$\;
+$sublist.n_s \leftarrow sublist.n_s + 1$\;
+
+
+$n \leftarrow n + 1$\;
+
+\If{!( $N/2 <= n <= 2N$)}
+{
+    $Rebuild()$\;
+}
+\caption{Insert na dvojposchodovom spájanom zozname s tagmi}
+\end{algorithm}
+
+\begin{algorithm}
+\SetKwInOut{Input}{input}
+\Input{sublist (spájaný podzoznam objektov),\\
+representatives (spájaný zoznam reprezentantov podzoznamov),\\
+N (počet objektov pri poslednej rekonštrukcii zoznamu)}
+\hrule\vspace{0.2em}
+\tcp{Set \textit{node} to the first node of the second half.}
+$N_s \leftarrow log(N)$\;
+$node \leftarrow sublist.head$\;
+\For{$i \leftarrow 0$ \KwTo $N_s$}
+{
+    $node \leftarrow node.next$\;
+}
+
+\vspace{10pt}
+
+\tcp{Split into two sublists.}
+$secondSublist \leftarrow new~LinkedList()$\;
+$secondSublist.head \leftarrow node$\;
+$secondSublist.tail \leftarrow sublist.tail$\;
+$secondSublist.n_s \leftarrow N_s$\;
+$sublist.n_s \leftarrow N_s$\;
+$sublist.tail \leftarrow node.prev$\;
+$node.prev.next \leftarrow null$\;
+$node.prev \leftarrow null$
+
+\vspace{10pt}
+
+\tcp{Create a new sublist representative.}
+$secondRep \leftarrow new~SublistRepresentative(secondSublist)$\;
+
+$nextRep \leftarrow x.rep.next$\;
+$u_r = (N/log(N))^2$\;
+\If{($nextRep == null and x.rep.tag == u_r$) or ($x.rep.tag + 1 == nextRep.tag$)}
+{
+    $Relabel(x.rep)$\;
+}
+$secondRep.tag \leftarrow ChooseNewTagAfter(x.rep)$\;
+$representatives.InsertNodeAfter(x.rep, secondRep)$\;
+
+\vspace{10pt}
+
+\tcp{Set new representative for nodes in the new sublist.}
+$node \leftarrow secondSublist.head$\;
+\While{$node \neq null$}
+{
+    $node.rep \leftarrow secondRep$\;
+    $node \leftarrow node.next$\;
+}
+
+\caption{SplitInHalf na dvojposchodovom spájanom zozname s tagmi}
+\end{algorithm}
+
+
+\section{Delete(x)}
+
+Pri odstraňovaní objektu stačí nastaviť nové vzťahy priameho predchodcu/následníka pre uzly susediace s $x$.
+
+Ak ostane po odstránení podzoznam prázdny (porušený invariant $0 < n_s <= 2N_s $), odstránime ho zo zoznamu reprezentantov.
+
+Ak je porušený invariant $N/2 <= n <= 2N$, realizujeme rekonštrukciu zoznamu.
+
+\begin{algorithm}
+\SetKwInOut{Input}{input}
+\Input{x (ukazateľ na objekt v zozname),\\
+representatives (spájaný zoznam reprezentantov podzoznamov),\\
+n (počet objektov v zozname),\\
+N (počet objektov pri poslednej rekonštrukcii zoznamu)}
+\hrule\vspace{0.2em}
+$N_s = log(N)$\;
+$sublist = x.rep.sublist$\;
+% \If {x.prev == null}
+% {
+%     $sublist.head \leftarrow x.next$\;
+% }
+% \Else
+% {
+%     $x.prev.next \leftarrow x.next$\;
+% }
+% \If {x.next == null}
+% {
+%     $sublist.tail \leftarrow x.prev$\;
+% }
+% \Else
+% {
+%     $x.next.prev \leftarrow x.prev$\;
+% }
+$sublist.RemoveNode(x)$\;
+% \tcp{Remove updates next/prev properties in neighbours and head/tail properties in the linked list.}
+
+$n \leftarrow n - 1$\;
+$sublist.n_s \leftarrow sublist.n_s - 1$\;
+
+\If{!($0 < sublist.n_s$)}
+{
+    $representatives.RemoveNode(x.rep)$\;
+    % \tcp{Remove updates next/prev properties in neighbours and head/tail properties in the linked list.}
+}
+
+\If{!( $N/2 <= n$)}
+{
+    $Rebuild()$\;
+}
+\caption{Delete na viacposchodovom spájanom zozname s tagmi}
+\end{algorithm}
+
+
+\section{Order(x, y)}
+
+Tagy v rámci každého podzoznamu sú nezávislé od ostatných podzoznamov, preto $x.tag < y.tag \iff x < y$ platí len vtedy, ak sa objekty $x$ a $y$ nachádzajú v rovnakom podzozname.
+Pri rozhodovaní, či $x < y$, najprv porovnávame tagy reprezentantov ich podzoznamov:
+\begin{compactitem}
+    \item{Ak $x.rep.tag = y.rep.tag$, tak sa objekty $x$ a $y$ nachádzajú v rovnakom podzozname, teda platí $x.tag < y.tag \iff x < y$.}
+    \item{Ak $x.rep.tag < y.rep.tag$, tak všetky objekty v podzozname s $x$ predchádzajú všetky objekty v podzozname s $y$, preto $x < y$.}
+    \item{Ak $x.rep.tag > y.rep.tag$, tak všetky objekty v podzozname s $x$ nasledujú v usporiadaní všetky objekty v podzozname s $y$, preto $x \nless y$.}
+\end{compactitem}
+
+\begin{algorithm}
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\Input{x (ukazateľ na objekt v zozname),\\
+y  (ukazateľ na objekt v zozname)}
+\Output{pravdivostná hodnota ($x < y$)}
+\hrule\vspace{0.2em}
+\If{$x.rep.tag == y.rep.tag$}
+{
+    \Return {$x.tag < y.tag$}\;
+}
+\Return {$x.rep.tag < y.rep.tag$}\;
+\caption{Order na dvojposchodovom spájanom zozname s tagmi}
+\end{algorithm}
+
+\clearpage
+
+\chapter{Pole s rezervou}
+
+Kapitola predstavuje alternatívnu implementáciu usporiadaného zoznamu z článku \textit{File Maintenance: When in Doubt, Change the Layout!} \cite{paper2_file_maintenance}.
+
+Objekty ukladáme do fiktívneho úplného binárneho stromu, ktorý je mapovaný do jednorozmerného poľa. Každý list stromu je reprezentovaný rovnako veľkou súvislou disjunktnou\footnote{Časti poľa odpovedajúce jednotlivým listom sa navzájom neprekrývajú.} častou poľa. Každý podstrom odpovedá súvislej časti poľa, ktorá obsahuje reprezentáciu všetkých jeho listov. Koreň teda odpovedá celému poľu.
+
+Každý vnútorný uzol stromu má navyše \textit{rezervu (buffer)}. Čím bližšie k listom je uzol, tým väčšiu rezervu má. Týmto sa z úplného binárneho stromu stáva neuplný ternárny. Vďaka rezerve máme vždy miesto pre vloženie nového prvku, po ktorom nasleduje \textit{vyprázdňovanie} rezerv \textit{(cleanup)}. Efektívnosť poľa s rezervou teda záleží práve na spôsobe vyprázdňovania rezerv.
+
+
+
+
+
 
 \clearpage
 
